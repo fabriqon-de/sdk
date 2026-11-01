@@ -18,7 +18,7 @@ export default defineConfig({
     nav: [{ text: 'Einstieg', link: '/guide/start' }, { text: 'API', link: '/api' }, { text: 'Beispiel', link: '/examples' }, { text: 'PlantFrame', link: 'https://plantframe.de/' }],
     sidebar: [
       { text: 'SDK kennenlernen', items: [{ text: 'Überblick', link: '/overview' }, { text: 'Schnellstart', link: '/guide/start' }, { text: 'Core & Datenmodell', link: '/guide/core' }, { text: 'Optionaler Viewer', link: '/guide/viewer' }, { text: 'DXF-Grundrisse', link: '/guide/drawing' }, { text: 'Interaktives Beispiel', link: '/examples' }] },
-      { text: 'Referenz & Integrationen', items: [{ text: 'API & Grenzen', link: '/api' }, { text: 'Studio & Demo', link: '/studio' }, { text: 'Lokales MCP', link: '/mcp' }, { text: 'Haus Blick', link: '/haus-blick' }] },
+      { text: 'Referenz & Integrationen', items: [{ text: 'API & Grenzen', link: '/api' }, { text: 'Studio & Demo', link: '/studio' }, { text: 'Lokales MCP', link: '/mcp' }, { text: 'Sensoren & MQTT Discovery', link: '/guide/sensors' }, { text: 'Haus Blick', link: '/haus-blick' }] },
       { text: 'Projekt & Betrieb', items: [{ text: 'Dokumentation bereitstellen', link: '/hosting' }, { text: 'MIT-Lizenz', link: '/license' }] }
     ],
     socialLinks: [{ icon: 'github', link: 'https://github.com/plantframe-de/sdk' }],

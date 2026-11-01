@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "kind": "plantframe.sensor-catalog",
+  "catalogId": "catalog-home",
+  "revision": 7,
+  "generatedAt": "2026-11-01T14:00:00Z",
+  "sources": [
+    {
+      "id": "mqtt-home",
+      "kind": "mqtt-discovery",
+      "name": "Mosquitto Haus",
+      "discoveryPrefix": "homeassistant"
+    }
+  ],
+  "devices": [
+    {
+      "id": "device.env-01",
+      "sourceId": "mqtt-home",
+      "externalIds": [
+        {
+          "kind": "identifier",
+          "value": "env-01"
+        }
+      ],
+      "name": "Klima Arbeitszimmer",
+      "manufacturer": "Example Devices",
+      "model": "Climate One",
+      "suggestedArea": "Arbeitszimmer",
+      "configurationUrlCandidate": "https://devices.example.test/env-01"
+    },
+    {
+      "id": "device.door-01",
+      "sourceId": "mqtt-home",
+      "externalIds": [
+        {
+          "kind": "identifier",
+          "value": "door-01"
+        }
+      ],
+      "name": "Türkontakt Arbeitszimmer"
+    }
+  ],
+  "signals": [
+    {
+      "id": "signal.temperature",
+      "sourceId": "mqtt-home",
+      "deviceId": "device.env-01",
+      "identity": {
+        "kind": "unique-id",
+        "component": "sensor",
+        "value": "env-01-temperature"
+      },
+      "name": "Temperatur",
+      "dataType": "number",
+      "unit": "°C",
+      "deviceClass": "temperature",
+      "stateClass": "measurement",
+      "lifecycle": "active",
+      "staleAfterSeconds": 300,
+      "mqtt": {
+        "discoveryTopic": "homeassistant/device/env-01/config",
+        "componentKey": "temperature",
+        "stateTopic": "lab/env-01/state",
+        "selector": {
+          "kind": "json-pointer",
+          "pointer": "/temperature"
+        },
+        "availability": {
+          "mode": "latest",
+          "topics": [
+            {
+              "topic": "lab/env-01/availability",
+              "online": "online",
+              "offline": "offline"
+            }
+          ]
+        },
+        "expireAfterSeconds": 600
+      }
+    },
+    {
+      "id": "signal.humidity",
+      "sourceId": "mqtt-home",
+      "deviceId": "device.env-01",
+      "identity": {
+        "kind": "unique-id",
+        "component": "sensor",
+        "value": "env-01-humidity"
+      },
+      "name": "Luftfeuchtigkeit",
+      "dataType": "number",
+      "unit": "%",
+      "deviceClass": "humidity",
+      "stateClass": "measurement",
+      "lifecycle": "active",
+      "staleAfterSeconds": 300,
+      "mqtt": {
+        "discoveryTopic": "homeassistant/device/env-01/config",
+        "componentKey": "humidity",
+        "stateTopic": "lab/env-01/state",
+        "selector": {
+          "kind": "json-pointer",
+          "pointer": "/humidity"
+        },
+        "availability": {
+          "mode": "latest",
+          "topics": [
+            {
+              "topic": "lab/env-01/availability",
+              "online": "online",
+              "offline": "offline"
+            }
+          ]
+        },
+        "expireAfterSeconds": 600
+      }
+    },
+    {
+      "id": "signal.door",
+      "sourceId": "mqtt-home",
+      "deviceId": "device.door-01",
+      "identity": {
+        "kind": "unique-id",
+        "component": "binary_sensor",
+        "value": "door-01-contact"
+      },
+      "name": "Türkontakt",
+      "dataType": "boolean",
+      "deviceClass": "door",
+      "lifecycle": "active",
+      "mqtt": {
+        "discoveryTopic": "homeassistant/binary_sensor/door-01/contact/config",
+        "stateTopic": "lab/door-01/contact",
+        "selector": {
+          "kind": "text"
+        },
+        "booleanPayloads": {
+          "on": "OPEN",
+          "off": "CLOSED"
+        }
+      }
+    }
+  ]
+}

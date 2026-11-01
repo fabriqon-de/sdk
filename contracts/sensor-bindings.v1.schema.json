@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.plantframe.de/contracts/sensor-bindings.v1.schema.json",
+  "title": "sensor-bindings v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "plantframe.sensor-bindings"
+    },
+    "catalogId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "modelRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "signalId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "assetId": {
+            "type": "string",
+            "pattern": "^[\\w.-]{1,128}$"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "history": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 8,
+                    "maxLength": 2048,
+                    "pattern": "^https?://[^/@\\s?#]+(?:[/?#][^\\s]*)?$"
+                  }
+                },
+                "required": [
+                  "label",
+                  "url"
+                ]
+              },
+              "source": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 8,
+                    "maxLength": 2048,
+                    "pattern": "^https?://[^/@\\s?#]+(?:[/?#][^\\s]*)?$"
+                  }
+                },
+                "required": [
+                  "label",
+                  "url"
+                ]
+              }
+            },
+            "required": []
+          }
+        },
+        "required": [
+          "id",
+          "signalId",
+          "assetId"
+        ]
+      },
+      "maxItems": 10000,
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "catalogId",
+    "projectId",
+    "revision",
+    "modelRevision",
+    "bindings"
+  ]
+}

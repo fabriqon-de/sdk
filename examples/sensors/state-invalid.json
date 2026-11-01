@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "kind": "plantframe.sensor-state",
+  "catalogId": "catalog-home",
+  "sourceId": "mqtt-home",
+  "signalId": "signal.temperature",
+  "streamId": "stream-example",
+  "sequence": 43,
+  "reason": "measurement",
+  "emittedAt": "2026-11-01T14:06:00Z",
+  "sourceConnection": "connected",
+  "availability": "online",
+  "freshness": "unknown",
+  "reading": {
+    "value": null,
+    "quality": "invalid",
+    "observedAt": null,
+    "receivedAt": "2026-11-01T14:06:00Z",
+    "retained": false
+  }
+}

@@ -7,3 +7,6 @@ test-results/
 playwright-report/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+
+# Generated from the canonical package contracts by scripts/copy-contracts.mjs.
+docs/public/contracts/

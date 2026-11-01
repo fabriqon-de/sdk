@@ -45,3 +45,9 @@ Zeichnungen nur mit Räumen erzeugen Mauern aus Raumkanten; vollständige gemein
 `createViewer(container, options)` aus `/viewer` liefert `setModel`, `select`, `fit`, `setCamera`, `setPaused`, `setAutoRotate` und `dispose`. Optionen sind `background`, `canvas`, `autoRotate`, `maxFps`, `keyboard`, `onSelect`, `assetFactory`, `connectionFactory`, `configure`, `onFrame` und `onContextLost`. Die Lebensdauer, Fabrikverantwortung und Frame-Zeitwerte beschreibt der [Viewer-Leitfaden](/guide/viewer#eigene-darstellung-und-animation). Erst das Erzeugen des Viewers benötigt Browser-APIs; Core greift nie auf DOM oder WebGL zu. Der Viewer-Entry-Point setzt ein ausdrücklich verfügbares Three.js voraus. Andere Renderer können dasselbe geprüfte Modell verwenden.
 
 `createDrawingObject(plan)` erstellt eine validierte Three.js-Gruppe aus Raumflächen und Mauern. Außerhalb eines Viewers trägt der Aufrufer die Verantwortung für die Ressourcenfreigabe.
+
+## Sensor-Verträge (Entwurf)
+
+Drei statische JSON-Schema-Dateien beschreiben Sensorkatalog, explizite Modellbindungen und Laufzeitstatus. Sie sind im Paket über `@plantframe/sdk/contracts/sensor-catalog.v1.schema.json`, `@plantframe/sdk/contracts/sensor-bindings.v1.schema.json` und `@plantframe/sdk/contracts/sensor-state.v1.schema.json` auflösbar. Ihre URLs in der gebauten Dokumentation liegen unter `/contracts/`.
+
+Dies sind keine neuen Runtime-Parser oder ein MQTT-Netzwerkclient. Die [Sensor-/MQTT-Spezifikation](/guide/sensors) definiert zusätzliche Referenz- und Identitätsregeln sowie den Ablauf von Modellauswahl, Zustand, Verlauf und Quellsystem. Beispieldateien und Entwicklungsprüfungen begleiten den Entwurf. Die bestehenden SceneModel- und Studio-Dateiformate bleiben unverändert.

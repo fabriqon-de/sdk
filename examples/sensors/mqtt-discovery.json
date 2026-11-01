@@ -1,0 +1,91 @@
+{
+  "entityDiscovery": [
+    {
+      "topic": "homeassistant/sensor/env-01/temperature/config",
+      "retained": true,
+      "payload": {
+        "unique_id": "env-01-temperature",
+        "name": "Temperatur",
+        "state_topic": "lab/env-01/state",
+        "value_template": "{{ value_json.temperature }}",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "availability_topic": "lab/env-01/availability",
+        "expire_after": 600,
+        "device": {
+          "identifiers": [
+            "env-01"
+          ],
+          "name": "Klima Arbeitszimmer",
+          "manufacturer": "Example Devices",
+          "model": "Climate One",
+          "suggested_area": "Arbeitszimmer",
+          "configuration_url": "https://devices.example.test/env-01"
+        }
+      }
+    },
+    {
+      "topic": "homeassistant/binary_sensor/door-01/contact/config",
+      "retained": true,
+      "payload": {
+        "uniq_id": "door-01-contact",
+        "name": "Türkontakt",
+        "stat_t": "lab/door-01/contact",
+        "pl_on": "OPEN",
+        "pl_off": "CLOSED",
+        "dev_cla": "door",
+        "dev": {
+          "ids": [
+            "door-01"
+          ],
+          "name": "Türkontakt Arbeitszimmer"
+        }
+      }
+    }
+  ],
+  "deviceDiscovery": [
+    {
+      "topic": "homeassistant/device/env-01/config",
+      "retained": true,
+      "payload": {
+        "dev": {
+          "ids": [
+            "env-01"
+          ],
+          "name": "Klima Arbeitszimmer",
+          "mf": "Example Devices",
+          "mdl": "Climate One",
+          "suggested_area": "Arbeitszimmer",
+          "cu": "https://devices.example.test/env-01"
+        },
+        "o": {
+          "name": "Example Bridge"
+        },
+        "state_topic": "lab/env-01/state",
+        "availability_topic": "lab/env-01/availability",
+        "expire_after": 600,
+        "cmps": {
+          "temperature": {
+            "p": "sensor",
+            "unique_id": "env-01-temperature",
+            "name": "Temperatur",
+            "device_class": "temperature",
+            "unit_of_measurement": "°C",
+            "state_class": "measurement",
+            "value_template": "{{ value_json.temperature }}"
+          },
+          "humidity": {
+            "p": "sensor",
+            "unique_id": "env-01-humidity",
+            "name": "Luftfeuchtigkeit",
+            "device_class": "humidity",
+            "unit_of_measurement": "%",
+            "state_class": "measurement",
+            "value_template": "{{ value_json.humidity }}"
+          }
+        }
+      }
+    }
+  ]
+}

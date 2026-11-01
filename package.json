@@ -33,7 +33,8 @@
     "docs:dev": "npm run build && vitepress dev docs --host 127.0.0.1",
     "docs:build": "npm run build && vitepress build docs",
     "docs:preview": "vitepress preview docs --host 127.0.0.1",
-    "test:docs": "playwright test --config playwright.docs.config.mjs"
+    "test:docs": "playwright test --config playwright.docs.config.mjs",
+    "test:viewer": "npm run build && playwright test --config playwright.viewer.config.mjs"
   },
   "peerDependencies": {
     "three": "^0.186.0"

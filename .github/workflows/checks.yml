@@ -31,6 +31,7 @@ jobs:
       - run: npm run docs:build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:docs
+      - run: npm run test:viewer
       - name: Check SDK packaging after documentation build
         run: npm run test:package
   docs-container:

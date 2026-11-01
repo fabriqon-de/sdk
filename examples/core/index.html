@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PlantFrame Core · ohne Laufzeit-Abhängigkeiten</title></head><body><h1>PlantFrame Core</h1><p>Dieses Beispiel lädt nur den Modellkern. Kein Import-Map, kein CDN und keine 3D-Bibliothek.</p><pre id="model"></pre><script type="module">
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fabriqon Core · ohne Laufzeit-Abhängigkeiten</title></head><body><h1>Fabriqon Core</h1><p>Dieses Beispiel lädt nur den Modellkern. Kein Import-Map, kein CDN und keine 3D-Bibliothek.</p><pre id="model"></pre><script type="module">
 import { parseSceneModel, serializeSceneModel } from '../../dist/model.js';
 const model = parseSceneModel({schemaVersion:1,name:'Core ohne Abhängigkeiten',assets:[],connections:[]});
 document.querySelector('#model').textContent = serializeSceneModel(model);

@@ -1,6 +1,6 @@
-# PlantFrame-Dokumentation
+# Fabriqon-Dokumentation
 
-Die Regeln in ../AGENTS.md gelten. VitePress erzeugt ausschließlich statische Seiten für docs.plantframe.de. Nach Änderungen npm run docs:build und npm run test:docs prüfen. Interne Links und Canonicals müssen zum Build passen; cleanUrls und nginx-Auflösung gemeinsam erhalten.
+Die Regeln in ../AGENTS.md gelten. VitePress erzeugt ausschließlich statische Seiten für docs.fabriqon.de. Nach Änderungen npm run docs:build und npm run test:docs prüfen. Interne Links und Canonicals müssen zum Build passen; cleanUrls und nginx-Auflösung gemeinsam erhalten.
 
 - SDK ist MIT-lizenziert, App bleibt privat. Keine Registry-Veröffentlichung behaupten, solange kein Paket existiert.
 - Beispiele müssen die tatsächlichen Parser und Viewer verwenden. Keine privaten Backendquellen, Anmeldedaten oder Kundenmodelle veröffentlichen.

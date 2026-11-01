@@ -7,13 +7,13 @@ test('guides, canonicals and license are available without JavaScript', async ({
     for (const [route, heading] of [['/guide/start','Schnellstart'], ['/api','API'], ['/mcp','Lokales MCP'], ['/license','MIT-Lizenz']]) {
       const response = await page.goto(route); expect(response.status()).toBe(200);
       await expect(page.locator('h1')).toContainText(heading);
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.plantframe.de${route}`);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.fabriqon.de${route}`);
     }
     await expect(page.locator('.vp-doc')).toContainText('MIT');
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /datenschutz');
     const sitemap = await (await page.request.get('/sitemap.xml')).text();
-    expect(sitemap).toContain('https://docs.plantframe.de/guide/start');
+    expect(sitemap).toContain('https://docs.fabriqon.de/guide/start');
     expect(sitemap).not.toContain('/404');
     expect(sitemap).not.toContain('AGENTS');
     expect(sitemap).not.toContain('CLAUDE');

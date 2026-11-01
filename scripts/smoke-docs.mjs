@@ -7,9 +7,9 @@ async function get(path, status=200) {
 }
 assert.equal((await get('/healthz')).body.trim(),'ok');
 for(const route of ['/','/guide/start','/guide/core','/guide/viewer','/guide/drawing','/api','/examples','/mcp','/haus-blick','/hosting','/license']) {
-  const {body}=await get(route); assert(body.includes('PlantFrame') && body.includes('<h1'),'SSR documentation missing');
+  const {body}=await get(route); assert(body.includes('Fabriqon') && body.includes('<h1'),'SSR documentation missing');
 }
-assert((await get('/sitemap.xml')).body.includes('https://docs.plantframe.de/guide/start'));
+assert((await get('/sitemap.xml')).body.includes('https://docs.fabriqon.de/guide/start'));
 assert((await get('/robots.txt')).body.includes('Disallow: /datenschutz'));
 assert((await get('/license.txt')).body.includes('MIT License'));
 const html=(await get('/guide/start')).body;

@@ -3,7 +3,7 @@
 Der erste Import unterstützt **vorbereitete ASCII-DXF-Dateien**. Er interpretiert keine beliebigen PDFs, Bilder oder vollständigen CAD-Projekte.
 
 ```js
-import { importDxf } from '@plantframe/sdk/drawing';
+import { importDxf } from '@fabriqon/sdk/drawing';
 
 const { plan, warnings } = importDxf(dxfText, {
   unit: 'mm', name: 'Erdgeschoss', height: 2.7, thickness: 0.15

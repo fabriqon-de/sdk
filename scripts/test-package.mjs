@@ -5,19 +5,19 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
-const temporary = mkdtempSync(path.join(tmpdir(), 'plantframe-core-'));
+const temporary = mkdtempSync(path.join(tmpdir(), 'fabriqon-core-'));
 try {
   const manifest = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }));
   assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
   assert(manifest[0].files.some(file => file.path === 'LICENSE'), 'SDK package must contain its MIT license');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);
-  writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@plantframe/sdk': `file:${archive}` } }));
+  writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@fabriqon/sdk': `file:${archive}` } }));
   execFileSync('npm', ['install', '--omit=dev', '--ignore-scripts', '--offline', '--no-audit', '--no-fund', '--package-lock=false'], { cwd: consumer, stdio: 'pipe' });
   writeFileSync(path.join(consumer, 'verify.mjs'), `
     import assert from 'node:assert/strict';
-    import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@plantframe/sdk';
-    import { importDxf } from '@plantframe/sdk/drawing';
+    import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@fabriqon/sdk';
+    import { importDxf } from '@fabriqon/sdk/drawing';
     const model = parseSceneModel({schemaVersion:1,name:'Independent',assets:[],connections:[]});
     assert.equal(JSON.parse(serializeSceneModel(model)).name, 'Independent');
     assert.throws(() => parseSceneModel(null), ModelValidationError);

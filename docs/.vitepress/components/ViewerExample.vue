@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import type { PlantFrameViewer } from '../../../dist/viewer.js';
+import type { FabriqonViewer } from '../../../dist/viewer.js';
 const container = ref<HTMLElement | null>(null), selected = ref('Noch kein Bauteil ausgewählt.'), error = ref('');
-let viewer: PlantFrameViewer | undefined, disposed = false;
+let viewer: FabriqonViewer | undefined, disposed = false;
 onMounted(async () => {
   try {
     const { createViewer } = await import('../../../dist/viewer.js');

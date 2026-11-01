@@ -6,8 +6,12 @@ async function get(path, status=200) {
   return {response,body:await response.text()};
 }
 assert.equal((await get('/healthz')).body.trim(),'ok');
-for(const route of ['/','/guide/start','/guide/core','/guide/viewer','/guide/drawing','/api','/examples','/mcp','/haus-blick','/hosting','/license']) {
+for(const route of ['/','/guide/start','/guide/core','/guide/viewer','/guide/drawing','/api','/examples','/mcp','/haus-blick','/hosting','/license','/contributing','/security','/support','/code-of-conduct','/governance','/changelog','/architecture','/roadmap','/releases','/guide/sensors']) {
   const {body}=await get(route); assert(body.includes('PlantFrame') && body.includes('<h1'),'SSR documentation missing');
+}
+for(const name of ['sensor-catalog','sensor-bindings','sensor-state']) {
+  const {body}=await get(`/contracts/${name}.v1.schema.json`);
+  assert.equal(JSON.parse(body).$id,`https://docs.plantframe.de/contracts/${name}.v1.schema.json`);
 }
 assert((await get('/sitemap.xml')).body.includes('https://docs.plantframe.de/guide/start'));
 assert((await get('/robots.txt')).body.includes('Disallow: /datenschutz'));

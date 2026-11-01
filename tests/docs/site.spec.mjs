@@ -4,12 +4,14 @@ test('guides, canonicals and license are available without JavaScript', async ({
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   try {
-    for (const [route, heading] of [['/guide/start','Schnellstart'], ['/api','API'], ['/mcp','Lokales MCP'], ['/license','MIT-Lizenz']]) {
+    for (const [route, heading] of [['/guide/start','Schnellstart'], ['/api','API'], ['/mcp','Lokales MCP'], ['/license','MIT-Lizenz'], ['/contributing','Contributing'], ['/support','Getting help'], ['/security','Security policy'], ['/code-of-conduct','Code of Conduct'], ['/governance','Project governance'], ['/changelog','Changelog'], ['/architecture','Architektur'], ['/roadmap','Entwicklungsstand'], ['/releases','Versionierung'], ['/haus-blick','Haus Blick testen']]) {
       const response = await page.goto(route); expect(response.status()).toBe(200);
       await expect(page.locator('h1')).toContainText(heading);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.plantframe.de${route}`);
     }
-    await expect(page.locator('.vp-doc')).toContainText('MIT');
+    await expect(page.locator('.vp-doc')).toContainText('feat/house-planner');
+    await expect(page.locator('.vp-doc')).toContainText('/local_apps/haus_blick/');
+    await expect(page.locator('.vp-doc')).toContainText('nur manuelle Referenzen');
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /datenschutz');
     const sitemap = await (await page.request.get('/sitemap.xml')).text();

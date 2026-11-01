@@ -52,3 +52,22 @@ docker run --rm --read-only --tmpfs /tmp:uid=101,gid=101,mode=1777 -p 127.0.0.1:
 Die Bereitstellung führt kein automatisches Live-Update durch. Nach Änderungen SDK-Checkout aktualisieren und den Docs-Dienst neu bauen. Quellen, `.env`, Buildcache und Node-Abhängigkeiten gehören nicht ins Laufzeitimage.
 
 Änderungsdaten werden nur bei einem vorhandenen Git-Checkout angezeigt. Docker-Buildkontexte und Quellarchive bauen ohne Git-Metadaten; dafür wird weder Git installiert noch das .git-Verzeichnis ins Image kopiert.
+
+## Neue Projektseiten auf docs.plantframe.de sichtbar machen
+
+Die Community-Seiten werden aus den kanonischen Dateien im Repository-Stamm eingebunden. Dadurch sind CONTRIBUTING, Security, Support, Conduct, Governance und Changelog auf GitHub und in den Docs inhaltlich konsistent. Die Sensorverträge stammen aus dem noch separat zu übernehmenden SDK-Vertrags-PR; diese Dokumentationsstufe baut auf dessen Entwicklungszweig auf.
+
+Ein grüner Build stellt die Seiten bereit, aktualisiert aber keinen entfernten Server. Nach Übernahme der vorgesehenen PRs in den SDK-Hauptzweig im bestehenden Landingpage-Checkout nur Docs neu bauen:
+
+```sh
+docker compose build --no-cache docs
+docker compose up -d --no-deps --wait --wait-timeout 300 docs
+curl --fail https://docs.plantframe.de/contributing
+curl --fail https://docs.plantframe.de/haus-blick
+```
+
+Die Befehle bauen und starten ausschließlich Docs; Demo, Datenbank und HA werden nicht gestartet. Falls SDK_SOURCE_DIR auf einen lokalen Checkout oder festen Commit zeigt, muss zuerst genau diese Quelle aktualisiert werden. `.env` und private App-Quellen bleiben erhalten. Die Befehle setzen einen vorhandenen, passenden Landingpage-Checkout und den eingerichteten Traefik voraus.
+
+Für eine bewusst gewählte Vorabversion kann SDK_SOURCE_DIR einmalig auf eine öffentliche Git-Referenz mit vollem Commit zeigen. Den verwendeten Commit dokumentieren; ein späterer Standardaufruf verwendet wieder die regulär konfigurierte Quelle. Keine Credentials in Git-URLs hinterlegen.
+
+Nach dem Neubau HTTP 200 und den tatsächlichen Inhalt von /contributing, /security, /changelog und /haus-blick prüfen. Die Anzeige von Version 0.2.0 als Haus-Blick-Teststand belegt nur die neue Anleitung, keine abgeschlossene HA-Abnahme. Die Root-URL kann schon mit einem älteren Build HTTP 200 liefern und beweist daher nicht, dass neue Unterseiten veröffentlicht wurden.

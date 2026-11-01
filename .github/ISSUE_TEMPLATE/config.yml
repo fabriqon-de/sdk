@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SDK documentation
+    url: https://docs.plantframe.de/
+    about: Guides, API reference and examples.
+  - name: Security reporting policy
+    url: https://github.com/plantframe-de/sdk/blob/main/SECURITY.md
+    about: Use the private reporting route described in the policy for suspected vulnerabilities.

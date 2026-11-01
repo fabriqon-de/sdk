@@ -1,6 +1,6 @@
 # MIT-Lizenz
 
-Der PlantFrame-SDK-Code ist MIT-lizenziert. Kommerzielle Nutzung, Änderungen und Weitergabe sind erlaubt; der Copyright- und Lizenzhinweis muss erhalten bleiben. Maßgeblich ist die [LICENSE-Datei im Repository](https://github.com/plantframe-de/sdk/blob/main/LICENSE).
+Der Fabriqon-SDK-Code ist MIT-lizenziert. Kommerzielle Nutzung, Änderungen und Weitergabe sind erlaubt; der Copyright- und Lizenzhinweis muss erhalten bleiben. Maßgeblich ist die [LICENSE-Datei im Repository](https://github.com/fabriqon-de/sdk/blob/main/LICENSE).
 
 Diese Lizenz betrifft das SDK und seine eigene Dokumentation. Die private Studio-Anwendung, ihr Backend und Haus Blick erhalten dadurch keine neue Lizenz.
 

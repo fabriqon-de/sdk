@@ -1,6 +1,6 @@
 # Überblick
 
-PlantFrame trennt ein neutrales räumliches Modell von seiner Darstellung und von produktbezogenen Funktionen.
+Fabriqon trennt ein neutrales räumliches Modell von seiner Darstellung und von produktbezogenen Funktionen.
 
 | Baustein | Zweck | Externe Laufzeit-Abhängigkeiten |
 | --- | --- | --- |

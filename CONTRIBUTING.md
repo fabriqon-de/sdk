@@ -1,13 +1,13 @@
-# Contributing to PlantFrame SDK
+# Contributing to Fabriqon SDK
 
-Contributions are welcome through issues and pull requests in [plantframe-de/sdk](https://github.com/plantframe-de/sdk). Start with the [documentation](https://docs.plantframe.de/) and [architecture](https://docs.plantframe.de/architecture). Use English for shared API names; English and German issue reports are welcome.
+Contributions are welcome through issues and pull requests in [fabriqon-de/sdk](https://github.com/fabriqon-de/sdk). Start with the [documentation](https://docs.fabriqon.de/) and [architecture](https://docs.fabriqon.de/architecture). Use English for shared API names; English and German issue reports are welcome.
 
 ## Set up the source checkout
 
 Node.js 22 or newer and npm are required. CI tests Node 22, 24 and 26. Use package-lock.json and npm; do not introduce another package manager.
 
 ```sh
-git clone https://github.com/plantframe-de/sdk.git
+git clone https://github.com/fabriqon-de/sdk.git
 cd sdk
 npm ci
 npm run build
@@ -20,9 +20,9 @@ Core and drawing code must compile with ES2022 libraries and no DOM types. Three
 ## Choose the right repository
 
 - SDK models, drawing import, optional viewer, neutral sensor contracts and docs: this repository.
-- Private Studio application, authentication, persistence and industrial rules: plantframe-de/app.
-- Home Assistant app packaging, house editor and HA adapters: plantframe-de/haus-blick.
-- Marketing website, its preview and combined deployment: plantframe-de/landingpage.
+- Private Studio application, authentication, persistence and industrial rules: fabriqon-de/app.
+- Home Assistant app packaging, house editor and HA adapters: fabriqon-de/haus-blick.
+- Marketing website, its preview and combined deployment: fabriqon-de/landingpage.
 
 Do not copy private application code, customer plans, credentials or proprietary assessment rules into this public SDK. Examples must be synthetic and reproducible.
 
@@ -65,4 +65,4 @@ For a schema change, distinguish an unreleased draft from a published contract. 
 
 ## License and conduct
 
-SDK contributions are submitted under the repository's MIT license; preserve third-party notices. Only contribute material you have the right to share. No CLA or DCO/sign-off process is currently required. See the [Code of Conduct](https://docs.plantframe.de/code-of-conduct), [support guide](https://docs.plantframe.de/support) and [security policy](https://docs.plantframe.de/security).
+SDK contributions are submitted under the repository's MIT license; preserve third-party notices. Only contribute material you have the right to share. No CLA or DCO/sign-off process is currently required. See the [Code of Conduct](https://docs.fabriqon.de/code-of-conduct), [support guide](https://docs.fabriqon.de/support) and [security policy](https://docs.fabriqon.de/security).

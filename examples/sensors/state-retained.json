@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "kind": "plantframe.sensor-state",
+  "kind": "fabriqon.sensor-state",
   "catalogId": "catalog-home",
   "sourceId": "mqtt-home",
   "signalId": "signal.temperature",

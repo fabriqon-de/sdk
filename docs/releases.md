@@ -34,4 +34,4 @@ Ein bereits veröffentlichter JSON-Vertrag behält seine Bedeutung. Inkompatible
 
 Bei einer tatsächlichen Veröffentlichung Version/Tag, Commit, Paketdateien und Release Notes einander zuordnen. Erst danach Installationsbefehle für ein Registry-Paket nennen. Ältere Versionen nur dann als unterstützt aufführen, wenn die Wartung tatsächlich übernommen wird.
 
-Die Dokumentation liegt im SDK-Repository und wird im Landingpage-Stack als eigener Docs-Dienst gebaut. Ein Paket-Release veröffentlicht die Website nicht automatisch. Nach übernommenen Änderungen den Docs-Dienst aus dem vorgesehenen Stand neu bauen und die neuen Routen unter docs.plantframe.de prüfen; siehe [Hosting](/hosting).
+Die Dokumentation liegt im SDK-Repository und wird im Landingpage-Stack als eigener Docs-Dienst gebaut. Ein Paket-Release veröffentlicht die Website nicht automatisch. Nach übernommenen Änderungen den Docs-Dienst aus dem vorgesehenen Stand neu bauen und die neuen Routen unter docs.fabriqon.de prüfen; siehe [Hosting](/hosting).

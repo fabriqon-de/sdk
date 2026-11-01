@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://docs.plantframe.de/contracts/sensor-catalog.v1.schema.json",
+  "$id": "https://docs.fabriqon.de/contracts/sensor-catalog.v1.schema.json",
   "title": "sensor-catalog v1",
   "type": "object",
   "additionalProperties": false,
@@ -9,7 +9,7 @@
       "const": 1
     },
     "kind": {
-      "const": "plantframe.sensor-catalog"
+      "const": "fabriqon.sensor-catalog"
     },
     "catalogId": {
       "type": "string",

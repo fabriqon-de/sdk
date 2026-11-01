@@ -4,7 +4,7 @@ Haus Blick ist der eigenständige Haus- und Geräteplaner für eine vorhandene H
 
 ## Welcher Stand ist testbar?
 
-Der [Hausplaner in PR #9](https://github.com/plantframe-de/haus-blick/pull/9) ist eine Entwicklungsversion 0.2.0 auf dem Branch `feat/house-planner`. Er baut auf dem offenen Grundlagen-PR #6 auf. Im Hauptzweig liegt noch keine installierbare Add-on-Version; das normale Hinzufügen der Repository-URL liefert diesen Entwicklungsstand daher noch nicht.
+Der [Hausplaner in PR #9](https://github.com/fabriqon-de/haus-blick/pull/9) ist eine Entwicklungsversion 0.2.0 auf dem Branch `feat/house-planner`. Er baut auf dem offenen Grundlagen-PR #6 auf. Im Hauptzweig liegt noch keine installierbare Add-on-Version; das normale Hinzufügen der Repository-URL liefert diesen Entwicklungsstand daher noch nicht.
 
 Geprüfter Quellstand für diese Anleitung: `a88bcf765a2cd2ce6359707ffeeb7805410d2543`. Unterstützte Zielarchitekturen sind amd64 und aarch64. Automatisierte Prüfungen sind vorhanden; eine reale HA-OS-Installation, Supervisor-Ingress und Backup/Restore müssen noch abgenommen werden. Eine separate Testinstallation ist dafür der sinnvollste erste Ort.
 
@@ -13,7 +13,7 @@ Geprüfter Quellstand für diese Anleitung: `a88bcf765a2cd2ce6359707ffeeb7805410
 Auf deinem Rechner mit Git:
 
 ```sh
-git -c core.autocrlf=false clone --branch feat/house-planner --single-branch https://github.com/plantframe-de/haus-blick.git
+git -c core.autocrlf=false clone --branch feat/house-planner --single-branch https://github.com/fabriqon-de/haus-blick.git
 cd haus-blick
 git checkout a88bcf765a2cd2ce6359707ffeeb7805410d2543
 git rev-parse HEAD
@@ -48,4 +48,4 @@ Vor Updates eine vollständige HA-Sicherung erstellen. Backup/Restore auf einer 
 
 Im Testbericht Commit, App-Version, Architektur, HA-OS-/Supervisor-Version und Ergebnis festhalten. Bei einem nicht sichtbaren lokalen Add-on die Verzeichnistiefe und YAML prüfen und danach die Supervisor-Logs ansehen. Keine Tokens, Datenbanken, privaten Grundrisse oder Zugangsdaten in öffentliche Fehlerberichte kopieren.
 
-Die vollständige Checkliste liegt im [Abnahmedokument des Testzweigs](https://github.com/plantframe-de/haus-blick/blob/feat/house-planner/docs/acceptance.md), Bedienung und Restore unter [haus_blick/DOCS.md](https://github.com/plantframe-de/haus-blick/blob/feat/house-planner/haus_blick/DOCS.md).
+Die vollständige Checkliste liegt im [Abnahmedokument des Testzweigs](https://github.com/fabriqon-de/haus-blick/blob/feat/house-planner/docs/acceptance.md), Bedienung und Restore unter [haus_blick/DOCS.md](https://github.com/fabriqon-de/haus-blick/blob/feat/house-planner/haus_blick/DOCS.md).

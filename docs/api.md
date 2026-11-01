@@ -48,6 +48,6 @@ Zeichnungen nur mit Räumen erzeugen Mauern aus Raumkanten; vollständige gemein
 
 ## Sensor-Verträge (Entwurf)
 
-Drei statische JSON-Schema-Dateien beschreiben Sensorkatalog, explizite Modellbindungen und Laufzeitstatus. Sie sind im Paket über `@plantframe/sdk/contracts/sensor-catalog.v1.schema.json`, `@plantframe/sdk/contracts/sensor-bindings.v1.schema.json` und `@plantframe/sdk/contracts/sensor-state.v1.schema.json` auflösbar. Ihre URLs in der gebauten Dokumentation liegen unter `/contracts/`.
+Drei statische JSON-Schema-Dateien beschreiben Sensorkatalog, explizite Modellbindungen und Laufzeitstatus. Sie sind im Paket über `@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json`, `@fabriqon/sdk/contracts/sensor-bindings.v1.schema.json` und `@fabriqon/sdk/contracts/sensor-state.v1.schema.json` auflösbar. Ihre URLs in der gebauten Dokumentation liegen unter `/contracts/`.
 
 Dies sind keine neuen Runtime-Parser oder ein MQTT-Netzwerkclient. Die [Sensor-/MQTT-Spezifikation](/guide/sensors) definiert zusätzliche Referenz- und Identitätsregeln sowie den Ablauf von Modellauswahl, Zustand, Verlauf und Quellsystem. Beispieldateien und Entwicklungsprüfungen begleiten den Entwurf. Die bestehenden SceneModel- und Studio-Dateiformate bleiben unverändert.

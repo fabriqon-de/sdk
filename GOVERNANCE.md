@@ -1,6 +1,6 @@
 # Project governance
 
-PlantFrame SDK is maintained in the plantframe-de GitHub organization. Repository maintainers review changes and decide releases; this document does not establish a foundation, elected board or external ownership rights.
+Fabriqon SDK is maintained in the fabriqon-de GitHub organization. Repository maintainers review changes and decide releases; this document does not establish a foundation, elected board or external ownership rights.
 
 Contributors propose changes through issues and pull requests. Significant public API, format, dependency or architecture decisions should document the problem, alternatives, compatibility and trade-offs. Maintainers seek a clear technical rationale rather than consensus by vote count.
 

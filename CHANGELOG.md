@@ -9,7 +9,7 @@ Notable changes are recorded here. This project is still an unpublished developm
 - Renderer-independent scene models, validation and JSON exchange with no external Core runtime dependencies.
 - Prepared ASCII DXF import for straight walls and closed room contours.
 - Optional Three.js viewer with procedural assets, selection, camera controls, custom geometry hooks, resource cleanup and an optional frame budget.
-- MIT license and VitePress documentation for docs.plantframe.de.
+- MIT license and VitePress documentation for docs.fabriqon.de.
 
 ### Proposals on this development branch
 

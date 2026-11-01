@@ -5,7 +5,7 @@ Der Core beschreibt Assets, Verbindungen, logische Zonen sowie optionale Grundri
 ## Validieren statt ungeprüft rendern
 
 ```js
-import { parseSceneModel, ModelValidationError } from '@plantframe/sdk';
+import { parseSceneModel, ModelValidationError } from '@fabriqon/sdk';
 
 try {
   const model = parseSceneModel(externalData);

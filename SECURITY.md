@@ -1,12 +1,12 @@
 # Security policy
 
-PlantFrame SDK is a development preview. No stable npm release or long-term support series has been published. Maintainers handle current-source reports on a best-effort basis; historical commits have no promised backport or response-time guarantee.
+Fabriqon SDK is a development preview. No stable npm release or long-term support series has been published. Maintainers handle current-source reports on a best-effort basis; historical commits have no promised backport or response-time guarantee.
 
 ## Report a suspected vulnerability privately
 
 If GitHub shows a private "Report a vulnerability" action on this repository's Security tab, use it. Its availability is a repository setting, not something this file enables.
 
-Otherwise use the published contact details at [PlantFrame's legal notice](https://plantframe.de/impressum.html) to request a private reporting channel. Do not put exploit details, tokens, broker credentials, private plans or personal data in a public issue. This policy does not advertise a separate security mailbox or a guaranteed response deadline.
+Otherwise use the published contact details at [Fabriqon's legal notice](https://fabriqon.de/impressum.html) to request a private reporting channel. Do not put exploit details, tokens, broker credentials, private plans or personal data in a public issue. This policy does not advertise a separate security mailbox or a guaranteed response deadline.
 
 Provide the affected commit/version, module, impact, a small synthetic reproduction and relevant environment details. Discuss disclosure and a fix with maintainers before publishing sensitive details. Ordinary usage questions and non-sensitive bugs belong in the issue tracker.
 

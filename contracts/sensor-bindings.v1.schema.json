@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://docs.plantframe.de/contracts/sensor-bindings.v1.schema.json",
+  "$id": "https://docs.fabriqon.de/contracts/sensor-bindings.v1.schema.json",
   "title": "sensor-bindings v1",
   "type": "object",
   "additionalProperties": false,
@@ -9,7 +9,7 @@
       "const": 1
     },
     "kind": {
-      "const": "plantframe.sensor-bindings"
+      "const": "fabriqon.sensor-bindings"
     },
     "catalogId": {
       "type": "string",

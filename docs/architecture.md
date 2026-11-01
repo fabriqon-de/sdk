@@ -1,6 +1,6 @@
 # Architektur und Grenzen
 
-PlantFrame SDK stellt neutrale räumliche Daten und optionale Darstellung bereit. App-Server, Anmeldung, Datenbank, industrielle Bewertungsregeln und Home-Assistant-Betrieb bleiben in den jeweiligen Produkten.
+Fabriqon SDK stellt neutrale räumliche Daten und optionale Darstellung bereit. App-Server, Anmeldung, Datenbank, industrielle Bewertungsregeln und Home-Assistant-Betrieb bleiben in den jeweiligen Produkten.
 
 | Baustein | Aufgabe | Abhängigkeiten zur Laufzeit |
 | --- | --- | --- |

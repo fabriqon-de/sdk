@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "kind": "plantframe.sensor-catalog",
+  "kind": "fabriqon.sensor-catalog",
   "catalogId": "catalog-home",
   "revision": 7,
   "generatedAt": "2026-11-01T14:00:00Z",

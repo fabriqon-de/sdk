@@ -7,7 +7,7 @@ test('guides, canonicals and license are available without JavaScript', async ({
     for (const [route, heading] of [['/guide/start','Schnellstart'], ['/api','API'], ['/mcp','Lokales MCP'], ['/license','MIT-Lizenz'], ['/contributing','Contributing'], ['/support','Getting help'], ['/security','Security policy'], ['/code-of-conduct','Code of Conduct'], ['/governance','Project governance'], ['/changelog','Changelog'], ['/architecture','Architektur'], ['/roadmap','Entwicklungsstand'], ['/releases','Versionierung'], ['/haus-blick','Haus Blick testen']]) {
       const response = await page.goto(route); expect(response.status()).toBe(200);
       await expect(page.locator('h1')).toContainText(heading);
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.plantframe.de${route}`);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.fabriqon.de${route}`);
     }
     await expect(page.locator('.vp-doc')).toContainText('feat/house-planner');
     await expect(page.locator('.vp-doc')).toContainText('/local_apps/haus_blick/');
@@ -15,7 +15,7 @@ test('guides, canonicals and license are available without JavaScript', async ({
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /datenschutz');
     const sitemap = await (await page.request.get('/sitemap.xml')).text();
-    expect(sitemap).toContain('https://docs.plantframe.de/guide/start');
+    expect(sitemap).toContain('https://docs.fabriqon.de/guide/start');
     expect(sitemap).not.toContain('/404');
     expect(sitemap).not.toContain('AGENTS');
     expect(sitemap).not.toContain('CLAUDE');
@@ -73,7 +73,7 @@ test('sensor contract guide and standalone JSON Schemas are available without Ja
       const response=await page.request.get(`/contracts/${name}.v1.schema.json`);
       expect(response.status()).toBe(200);
       const schema=await response.json();
-      expect(schema.$id).toBe(`https://docs.plantframe.de/contracts/${name}.v1.schema.json`);
+      expect(schema.$id).toBe(`https://docs.fabriqon.de/contracts/${name}.v1.schema.json`);
       expect(schema.additionalProperties).toBe(false);
     }
   }finally{await context.close();}

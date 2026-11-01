@@ -7,7 +7,7 @@ Diese Übersicht unterscheidet vorhandenen Quellcode, definierte Verträge und w
 | Core, Validierung und JSON-Austausch | Im SDK implementiert, ohne externe Laufzeitpakete |
 | Begrenzter ASCII-DXF-Import | Implementiert für vorbereitete gerade Mauern und geschlossene Räume |
 | Optionaler Three.js-Viewer | Implementiert, einschließlich Auswahl, Kamera, eigener Geometrien und Renderbudget |
-| VitePress-Dokumentation | Implementiert und für docs.plantframe.de paketiert |
+| VitePress-Dokumentation | Implementiert und für docs.fabriqon.de paketiert |
 | npm-Release | Noch nicht veröffentlicht; private:true schützt vor versehentlicher Veröffentlichung |
 | Sensor-/MQTT-Importformat | Vertragsentwurf mit Schemas und Beispielen auf diesem Entwicklungszweig |
 | MQTT-Brokeradapter, Live-Sensorpanel und Historienadapter | Weitere Umsetzung; nicht durch den Datenvertrag fertiggestellt |

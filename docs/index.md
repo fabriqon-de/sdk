@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: PlantFrame
+  name: Fabriqon
   text: Modelle verstehen. Eigene Werkzeuge bauen.
   tagline: Dokumentation für den SDK-Core ohne Laufzeit-Abhängigkeiten, den optionalen Three.js-Viewer und vorbereitete DXF-Grundrisse.
   actions:
@@ -25,7 +25,7 @@ features:
 
 ## Entwicklungsstand
 
-Das SDK ist **MIT-lizenziert** und als Quellcode verfügbar. Ein npm-Paket ist noch nicht veröffentlicht. Du kannst den Quell-Checkout bauen und ein lokales Paket erstellen. Studio ist die private Anwendung; die [Browser-Demo](https://demo.plantframe.de/) und Haus Blick sind eigenständige Teile des Ökosystems.
+Das SDK ist **MIT-lizenziert** und als Quellcode verfügbar. Ein npm-Paket ist noch nicht veröffentlicht. Du kannst den Quell-Checkout bauen und ein lokales Paket erstellen. Studio ist die private Anwendung; die [Browser-Demo](https://demo.fabriqon.de/) und Haus Blick sind eigenständige Teile des Ökosystems.
 
 ## Mitwirken und testen
 

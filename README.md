@@ -64,3 +64,7 @@ After building, serve the repository root with a static HTTP server. Open `examp
 ## Documentation
 
 The VitePress documentation targets https://docs.plantframe.de and includes guides, API reference, an interactive viewer and local search. Run `npm run docs:dev` locally or `npm run docs:build` for static output. `npm run test:docs` checks the built site in Chromium. Deployment is documented in [hosting instructions](https://github.com/plantframe-de/sdk/blob/main/docs/hosting.md); Dockerfile.docs builds an unprivileged static nginx image. Documentation tooling is development-only and is excluded from the SDK package.
+
+### Viewer extensions for interactive websites
+
+The optional viewer accepts an existing canvas and supports pause, explicit camera positions, custom connection geometry, and scene/frame hooks. Websites can retain their visual design while the SDK owns rendering, picking and resource cleanup. Core still needs no external runtime packages. See the [viewer guide](docs/guide/viewer.md) for API details and ownership rules. `npm run test:viewer` exercises these features in a real browser; use `CHROMIUM_PATH` for an existing Chromium installation.

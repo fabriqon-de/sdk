@@ -79,7 +79,9 @@ export function createViewer(container: HTMLElement, options: ViewerOptions = {}
   canvas.tabIndex = 0;
   if (!options.canvas) canvas.setAttribute('role', 'application');
   if (!canvas.hasAttribute('aria-label')) canvas.setAttribute('aria-label', 'PlantFrame 3D viewer. Arrow keys select assets; Escape clears selection.');
-  canvas.style.display = 'block'; canvas.style.width = '100%'; canvas.style.height = '100%';
+  if (!options.canvas) {
+    canvas.style.display = 'block'; canvas.style.width = '100%'; canvas.style.height = '100%';
+  }
   if (!options.canvas) container.append(canvas);
   const scene = new THREE.Scene(), content = new THREE.Group(); scene.add(content);
   const camera = new THREE.PerspectiveCamera(40, 1, .1, 1000000);

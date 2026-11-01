@@ -55,6 +55,9 @@ test('invalid replacement and factory failures preserve the previous model',asyn
 });
 test('borrowed canvas survives idempotent disposal; listeners and frames stop',async({page})=>{
   await start(page,{borrowCanvas:true});
+  await page.locator('#borrowed').evaluate(canvas=>{canvas.hidden=true;});
+  await expect(page.locator('#borrowed')).toBeHidden();
+  await page.locator('#borrowed').evaluate(canvas=>{canvas.hidden=false;});
   await page.evaluate(()=>{viewer.dispose();viewer.dispose();});
   const frames=await page.evaluate(()=>stats.frames);
   await page.waitForTimeout(150);

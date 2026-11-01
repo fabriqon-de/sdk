@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -7,6 +8,8 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const temporary = mkdtempSync(path.join(tmpdir(), 'plantframe-core-'));
 try {
   const manifest = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }));
+  assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
+  assert(manifest[0].files.some(file => file.path === 'LICENSE'), 'SDK package must contain its MIT license');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);
   writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@plantframe/sdk': `file:${archive}` } }));

@@ -1,0 +1,10 @@
+.git
+node_modules
+dist
+docs/.vitepress/dist
+docs/.vitepress/cache
+.env
+.env.*
+*.tgz
+test-results
+playwright-report

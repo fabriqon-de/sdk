@@ -2,7 +2,7 @@
 
 A renderer-independent JavaScript/TypeScript SDK for spatial models. Core and prepared DXF import have **zero external runtime dependencies**. Three.js is optional and used only by the separate viewer entry point. There is no React, Next.js, authentication, database or private assessment code in this repository.
 
-This is a development preview. The source repository is https://github.com/plantframe-de/sdk. No package has been published to a registry. The license is not yet selected; `private: true` prevents accidental npm publication and `UNLICENSED` grants no open-source license.
+This is a development preview. The source repository is https://github.com/plantframe-de/sdk. No package has been published to a registry. The SDK is MIT-licensed. `private: true` prevents accidental npm publication until a deliberate registry release. The private application and its backend are not licensed by this repository.
 
 | Entry point | Purpose | Runtime requirements |
 | --- | --- | --- |
@@ -60,3 +60,7 @@ The container needs a nonzero height. Arrow keys select assets; Escape clears se
 `importDxf(text, {unit:'mm', name:'Ground floor'})` from `@plantframe/sdk/drawing` accepts prepared ASCII DXF. Walls use LINE or straight LWPOLYLINE on WALL/WALLS/MAUERN layers; closed room outlines use ROOM/ROOMS/RAUM/RAEUME. `ROOM:Kitchen` gives a room name. Units come from `$INSUNITS` (4/5/6 for mm/cm/m) or an explicit option. Output uses metres and is centred by default; DXF Y becomes world -Z. Default walls are 2.7 m high and 0.15 m thick. Curves, 3D elevations, invalid polygons and unsupported entities on selected layers are rejected. No PDF/image recognition or full DXF implementation is claimed.
 
 After building, serve the repository root with a static HTTP server. Open `examples/core/` for a browser example with no external imports, or `examples/browser/` for the optional Three.js viewer. No application server or database is required. Both examples load local files, without a CDN.
+
+## Documentation
+
+The VitePress documentation targets https://docs.plantframe.de and includes guides, API reference, an interactive viewer and local search. Run `npm run docs:dev` locally or `npm run docs:build` for static output. `npm run test:docs` checks the built site in Chromium. Deployment is documented in [hosting instructions](https://github.com/plantframe-de/sdk/blob/main/docs/hosting.md); Dockerfile.docs builds an unprivileged static nginx image. Documentation tooling is development-only and is excluded from the SDK package.

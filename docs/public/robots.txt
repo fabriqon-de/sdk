@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /impressum
+Disallow: /datenschutz
+Sitemap: https://docs.plantframe.de/sitemap.xml

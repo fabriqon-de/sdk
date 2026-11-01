@@ -1,29 +1,47 @@
-# API and model contract
+# API und Modellvertrag
 
-## Core: no renderer or platform dependency
+## Core
 
-- `parseSceneModel(value: unknown): SceneModel` validates and clones a model.
-- `parseDrawingPlan(value: unknown): DrawingPlan` validates and clones drawing geometry.
-- `serializeSceneModel(model): string` validates before producing JSON.
-- `ModelValidationError` reports the failing field through `issues` and `message`.
-- Exported types include `SceneModel`, `SceneAsset`, `SceneConnection`, `SceneZone`, `DrawingPlan`, `DrawingWall`, `DrawingRoom`, `Point` and `Vector3`.
+Der Core ist renderer- und plattformunabhängig und benötigt keine externen Laufzeitpakete.
 
-Models are plain JSON objects. Unknown fields, coercion, non-finite numbers and dangling references are rejected. Optional values may be absent; explicit undefined is normalized to absence. The parser does not mutate inputs. Version 1 JSON remains compatible with the original development model. The former Zod schema objects are replaced by parser functions; applications needing Zod can adapt those functions locally without adding Zod to the SDK.
+| Export | Rückgabe / Bedeutung |
+| --- | --- |
+| `parseSceneModel(value: unknown)` | Geprüfte, vom Eingang gelöste Kopie eines `SceneModel` |
+| `parseDrawingPlan(value: unknown)` | Geprüfte Kopie eines `DrawingPlan` |
+| `serializeSceneModel(model)` | Validiert das Modell und liefert formatiertes JSON |
+| `ModelValidationError` | Fehler mit `issues` aus `path` und `message` |
 
-Coordinates and sizes are metres. Positions refer to the centre of an asset footprint at its base; positive Y is up. Coordinate bounds are ±100000, sizes must be positive and at most 100000. IDs are 1–128 ASCII word/dot/hyphen characters. The model name is 1–200 characters; asset/zone labels are at most 200.
+Exportierte Typen: `SceneModel`, `SceneAsset`, `SceneConnection`, `SceneZone`, `DrawingPlan`, `DrawingWall`, `DrawingRoom`, `Point` und `Vector3`.
 
-Assets support box, cylinder and sphere shapes, plus optional procedural kinds: machine, robot, conveyor, controller, server, gateway, sensor and generic. Colors are integer RGB values from 0 to 0xffffff.
+Modelle sind einfache JSON-Objekte. Unbekannte Felder, Typumwandlung, nicht endliche Zahlen und ungültige Referenzen werden abgewiesen. Optionale Werte dürfen fehlen; ausdrückliches `undefined` wird als Abwesenheit normalisiert. Parser verändern den Eingang nicht. SDK-JSON bleibt bei Version 1. Die früheren Zod-Schemaobjekte werden durch Parserfunktionen ersetzt; Anwendungen können diese bei Bedarf lokal in ihre eigene Validierung einbetten.
 
-Limits per model: 2000 assets, 10000 connections and 200 zones. IDs are unique within each collection. Connections join two different existing assets. Logical zone membership is explicit through assetIds; bounds never infer membership. Zone bounds must have positive area.
+## Maße, Assets und Grenzen
 
-Drawings support 5000 walls and 200 rooms, each room with 3–256 polygon vertices. Walls need distinct endpoints and positive height/thickness. Rooms need non-degenerate, non-self-intersecting polygons. Drawing unit is always m. Walls and rooms have unique IDs within their own collections. Rooms do not become security zones automatically.
+Koordinaten und Größen sind Meter. Positionen beziehen sich auf die Grundflächenmitte an der Basis; positive Y-Werte zeigen nach oben. Koordinaten liegen zwischen −100000 und +100000, Größen sind positiv und höchstens 100000. IDs umfassen 1–128 ASCII-Wortzeichen, Punkte oder Bindestriche. Der Modellname hat 1–200 Zeichen; Asset-/Zonenbezeichnungen höchstens 200.
 
-## Drawing import: no external packages
+Assets unterstützen `box`, `cylinder` und `sphere`. Optionale prozedurale Typen sind `machine`, `robot`, `conveyor`, `controller`, `server`, `gateway`, `sensor` und `generic`. Farben sind ganzzahlige RGB-Werte von 0 bis `0xffffff`.
 
-`importDxf(text, options)` returns `{plan, warnings}`. Options are `unit` (m/cm/mm), `name`, `height`, `thickness` and `center` (default true). The input limit is 5 MB of text. Room-only drawings derive walls and deduplicate complete shared edges. Explicit wall layers take precedence over inferred room walls. Other layers are ignored with a warning; entities on selected layers must be supported. No external references or files are loaded.
+| Sammlung | Grenze |
+| --- | --- |
+| Assets | 2000 |
+| Verbindungen | 10000 |
+| Logische Zonen | 200 |
+| Mauern pro Grundriss | 5000 |
+| Räume pro Grundriss | 200 |
+| Polygonpunkte pro Raum | 3–256 |
 
-## Optional viewer
+IDs sind innerhalb jeder Sammlung eindeutig. Verbindungen verbinden zwei verschiedene vorhandene Assets. Die logische Zonenzugehörigkeit steht ausdrücklich in `assetIds`; Grenzen leiten keine Zugehörigkeit ab und müssen eine positive Fläche haben.
 
-`createViewer(container, options)` returns `setModel`, `select`, `fit` and `dispose`. Options include `background`, `autoRotate`, `onSelect` and `assetFactory`. Only calling this function requires browser APIs; Core never accesses DOM/WebGL. The viewer entry point requires Three.js to be explicitly available. A different renderer may consume the same validated model without this entry point.
+Mauern brauchen verschiedene Endpunkte sowie positive Höhe und Stärke. Raumflächen dürfen weder degeneriert noch selbstschneidend sein. Die Zeichnungseinheit ist immer `m`. Räume werden nicht automatisch zu Sicherheitszonen.
 
-`createDrawingObject(plan)` creates a validated Three.js group of room floors and wall meshes. The caller owns its rendering resources if the object is used outside a viewer.
+## DXF-Import
+
+`importDxf(text, options)` aus dem Entry Point `/drawing` liefert `{ plan, warnings }`. Optionen sind `unit` (`m`, `cm`, `mm`), `name`, `height`, `thickness` und `center` (standardmäßig `true`). Die Textgrenze beträgt 5 MB.
+
+Zeichnungen nur mit Räumen erzeugen Mauern aus Raumkanten; vollständige gemeinsame Kanten werden dedupliziert. Explizite Wände haben Vorrang. Andere Layer werden mit Hinweis übersprungen; Elemente auf gewählten Layern müssen unterstützt sein. Es werden keine externen Referenzen oder Dateien geladen. Die unterstützten Elemente und Einheiten stehen im DXF-Leitfaden der Dokumentation.
+
+## Optionaler Viewer
+
+`createViewer(container, options)` aus `/viewer` liefert `setModel`, `select`, `fit` und `dispose`. Optionen sind `background`, `autoRotate`, `onSelect` und `assetFactory`. Erst das Erzeugen des Viewers benötigt Browser-APIs; Core greift nie auf DOM oder WebGL zu. Der Viewer-Entry-Point setzt ein ausdrücklich verfügbares Three.js voraus. Andere Renderer können dasselbe geprüfte Modell verwenden.
+
+`createDrawingObject(plan)` erstellt eine validierte Three.js-Gruppe aus Raumflächen und Mauern. Außerhalb eines Viewers trägt der Aufrufer die Verantwortung für die Ressourcenfreigabe.

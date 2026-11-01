@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "Dependency-free PlantFrame models and DXF import with an optional Three.js viewer",
   "exports": {
     ".": {
@@ -22,25 +22,32 @@
   "files": [
     "dist",
     "examples",
-    "docs",
+    "docs/api.md",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.core.json && tsc -p tsconfig.json",
-    "test": "vitest run test",
-    "test:package": "npm run build && node scripts/test-package.mjs"
+    "test": "vitest run test/",
+    "test:package": "npm run build && node scripts/test-package.mjs",
+    "docs:dev": "npm run build && vitepress dev docs --host 127.0.0.1",
+    "docs:build": "npm run build && vitepress build docs",
+    "docs:preview": "vitepress preview docs --host 127.0.0.1",
+    "test:docs": "playwright test --config playwright.docs.config.mjs"
   },
   "peerDependencies": {
     "three": "^0.186.0"
   },
   "devDependencies": {
-    "@types/three": "^0.186.0",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.11",
-    "vite": "^7.3.1",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.5",
-    "three": "^0.186.1"
+    "@types/three": "^0.186.0",
+    "three": "^0.186.1",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.1",
+    "vitepress": "^1.6.4",
+    "vitest": "^4.1.11",
+    "vue": "^3.5.44"
   },
   "peerDependenciesMeta": {
     "three": {
@@ -53,5 +60,6 @@
   },
   "engines": {
     "node": ">=22"
-  }
+  },
+  "homepage": "https://docs.plantframe.de/"
 }

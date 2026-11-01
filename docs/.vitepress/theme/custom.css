@@ -1,0 +1,16 @@
+@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/fonts/ibm-plex-sans-400-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Semi Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/barlow-semi-condensed-600-latin.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2'); }
+:root {
+  --vp-font-family-base: 'IBM Plex Sans', system-ui, sans-serif;
+  --vp-font-family-mono: 'IBM Plex Mono', monospace;
+  --vp-c-bg: #f5f6f7; --vp-c-bg-alt: #e4e8ec; --vp-c-bg-soft: #e4e8ec;
+  --vp-c-text-1: #0f1720; --vp-c-text-2: #4a5565; --vp-c-divider: #cbd2da;
+  --vp-c-brand-1: #0a4a8c; --vp-c-brand-2: #07366a; --vp-c-brand-3: #0a4a8c;
+  --vp-button-brand-bg: #ffb703; --vp-button-brand-text: #0f1720; --vp-button-brand-hover-bg: #e5a000; --vp-button-brand-hover-text: #0f1720;
+  --vp-home-hero-name-color: #0a4a8c;
+}
+.dark { --vp-c-bg: #0f1720; --vp-c-bg-alt: #172432; --vp-c-bg-soft: #172432; --vp-c-text-1: #f5f6f7; --vp-c-text-2: #cbd2da; --vp-c-divider: #354254; --vp-c-brand-1: #83bfff; --vp-c-brand-2: #aad4ff; }
+h1, h2, h3, .VPHero .name, .VPHero .text { font-family: 'Barlow Semi Condensed', system-ui, sans-serif; font-weight: 600; }
+.VPButton.medium, .VPButton.big, .VPFeatures .VPFeature { border-radius: 4px; }
+.docs-viewer { height: 400px; width: 100%; border: 1px solid var(--vp-c-divider); border-radius: 4px; overflow: hidden; }

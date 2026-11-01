@@ -1,0 +1,1 @@
+Local font subsets match plantframe-de/landingpage public/fonts. Barlow Semi Condensed, IBM Plex Sans and IBM Plex Mono are supplied under their respective SIL Open Font License notices in this directory. No remote font service is used.

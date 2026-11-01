@@ -1,51 +1,67 @@
 # Fabriqon SDK
 
-A renderer-independent JavaScript/TypeScript SDK for spatial models. Core and prepared DXF import have **zero external runtime dependencies**. Three.js is optional and used only by the separate viewer entry point. There is no React, Next.js, authentication, database or private assessment code in this repository.
+[![SDK checks](https://github.com/fabriqon-de/sdk/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/fabriqon-de/sdk/actions/workflows/checks.yml)
 
-This is a development preview. The source repository is https://github.com/fabriqon-de/sdk. No package has been published to a registry. The SDK is MIT-licensed. `private: true` prevents accidental npm publication until a deliberate registry release. The private application and its backend are not licensed by this repository.
+A renderer-independent JavaScript/TypeScript SDK for spatial models, prepared DXF import and an optional Three.js viewer. **Core and DXF have zero external runtime dependencies.** No React, Next.js, application server, database or private assessment code is required.
+
+[Documentation](https://docs.fabriqon.de/) · [API](https://docs.fabriqon.de/api) · [Examples](https://docs.fabriqon.de/examples) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
+
+## Status and license
+
+This is an **unpublished development preview**, licensed under [MIT](LICENSE). This SDK has not been published to npm. `private: true` prevents accidental registry publication. Use the public source or a locally built archive; do not infer a released package from its name/version in package.json. Studio remains a separate private application, and Haus Blick has its own release lifecycle.
 
 | Entry point | Purpose | Runtime requirements |
 | --- | --- | --- |
-| `@fabriqon/sdk` | Types, validation and JSON serialization | None |
-| `@fabriqon/sdk/drawing` | Prepared ASCII DXF to walls and rooms | Core only; no external packages |
-| `@fabriqon/sdk/viewer` | Interactive 3D and procedural assets | Explicitly installed Three.js and a WebGL browser |
+| `@fabriqon/sdk` | Scene/drawing types, validation and JSON serialization | None |
+| `@fabriqon/sdk/drawing` | Prepared ASCII DXF to walls and rooms | Core only |
+| `@fabriqon/sdk/viewer` | Interactive 3D, procedural assets and selection | Explicitly installed Three.js and a WebGL browser |
+| `@fabriqon/sdk/contracts/*.v1.schema.json` | Sensor catalog, bindings and state contracts | Static JSON files; proposal on this development branch |
 
-## Work with the source
+Sensor contracts define data and behavior. They do not implement an MQTT connection, live application panel or history service.
+
+## Quick start from source
+
+Node.js 22+ and npm are required; CI covers Node 22, 24 and 26.
 
 ```sh
+git clone https://github.com/fabriqon-de/sdk.git
+cd sdk
 npm ci
 npm run build
 npm test
 npm run test:package
+npm pack
 ```
 
-The build first checks Core and DXF with ES2022 libraries only, without DOM types. TypeScript, Vitest, Vite, type declarations and Three.js are development dependencies. They are not installed when consuming the packed SDK with production dependencies only. Three.js is an optional peer dependency, so Core consumers do not have to install it.
-
-Until registry publication, consume an archive made with `npm pack` or use the built source checkout. Do not use a registry install command for this unpublished package. `test:package` packs and installs an archive offline into a temporary consumer, then proves that Core and DXF work without Three.js, Zod, React or Next.js.
-
-## Core
+`npm pack` creates a local archive. Install that archive by file path in a separate project. Three.js is an optional peer and must be installed explicitly only if the viewer is used. Build tools, Ajv and documentation packages are development-only. The isolated package check verifies that Core/DXF and the schema files work without installing those runtime packages.
 
 ```js
-import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@fabriqon/sdk';
+import { parseSceneModel, serializeSceneModel } from '@fabriqon/sdk';
 
 const model = parseSceneModel({
-  schemaVersion: 1, name: 'Example',
-  assets: [{ id: 'machine-1', name: 'Machine', shape: 'box',
-    position: { x: 0, y: 0, z: 0 }, size: { x: 2, y: 2, z: 1 } }],
+  schemaVersion: 1,
+  name: 'Example plant',
+  assets: [{
+    id: 'machine-1', name: 'Machine', shape: 'box', kind: 'machine',
+    position: { x: 0, y: 0, z: 0 },
+    size: { x: 2, y: 2, z: 1 }
+  }],
   connections: []
 });
 console.log(serializeSceneModel(model));
 ```
 
-Parsing returns a detached, validated copy. Invalid input throws `ModelValidationError` with an `issues` array containing `path` and `message`. There are no Zod schema objects in the public API. The JSON format remains schema version 1. See [API and model contract](docs/api.md) for limits, geometry and units.
+The parser returns a detached copy and rejects invalid types, references, bounds and unknown fields with ModelValidationError. Dimensions are metres; positions refer to the ground footprint. See [the model contract](https://docs.fabriqon.de/api) for limits.
 
 ## Optional viewer
 
-Install a compatible Three.js in your application only if you use the viewer. The source checkout already includes it as a development dependency.
+Install a compatible Three.js (`^0.186.0`) in the consuming application. The container needs a nonzero height; initialize the viewer only in a browser.
 
 ```js
 import { createViewer } from '@fabriqon/sdk/viewer';
+
 const viewer = createViewer(document.querySelector('#scene'), {
+  maxFps: 30,
   onSelect: id => console.log(id)
 });
 viewer.setModel(model);
@@ -53,22 +69,40 @@ viewer.setModel(model);
 viewer.dispose();
 ```
 
-The container needs a nonzero height. Arrow keys select assets; Escape clears selection. `setModel(model, {fit:false})` preserves the camera; `fit()` frames the model. `dispose()` is idempotent and frees observers, listeners and rendering resources. A disposed viewer cannot be reused. `assetFactory` objects transfer ownership of their geometry, materials and textures to the viewer.
+Selection, explicit camera views, pause, custom geometry/connection factories and scene/frame hooks are available. Returned factory objects transfer resource ownership to the viewer. Preserve keyboard access, reduced motion and fallback behavior; dispose is idempotent. See [the viewer guide](https://docs.fabriqon.de/guide/viewer).
 
-## Drawings and examples
+## Drawing import and sensor contracts
 
-`importDxf(text, {unit:'mm', name:'Ground floor'})` from `@fabriqon/sdk/drawing` accepts prepared ASCII DXF. Walls use LINE or straight LWPOLYLINE on WALL/WALLS/MAUERN layers; closed room outlines use ROOM/ROOMS/RAUM/RAEUME. `ROOM:Kitchen` gives a room name. Units come from `$INSUNITS` (4/5/6 for mm/cm/m) or an explicit option. Output uses metres and is centred by default; DXF Y becomes world -Z. Default walls are 2.7 m high and 0.15 m thick. Curves, 3D elevations, invalid polygons and unsupported entities on selected layers are rejected. No PDF/image recognition or full DXF implementation is claimed.
+The DXF importer handles prepared ASCII LINE/straight LWPOLYLINE walls and closed room contours on documented layers. It checks units and geometry; it does not claim arbitrary PDF/image recognition or complete DXF/IFC support. [Drawing guide](https://docs.fabriqon.de/guide/drawing).
 
-After building, serve the repository root with a static HTTP server. Open `examples/core/` for a browser example with no external imports, or `examples/browser/` for the optional Three.js viewer. No application server or database is required. Both examples load local files, without a CDN.
+The sensor contract proposal separates catalog facts, model bindings and transient runtime values. It specifies MQTT Discovery mapping and the flow **select sensor → inspect state → open history → reach its source**. Native/normalized synthetic examples are in examples/sensors/. [Sensor guide](https://docs.fabriqon.de/guide/sensors).
 
-## Documentation
+## Documentation and examples
 
-The VitePress documentation targets https://docs.fabriqon.de and includes guides, API reference, an interactive viewer and local search. Run `npm run docs:dev` locally or `npm run docs:build` for static output. `npm run test:docs` checks the built site in Chromium. Deployment is documented in [hosting instructions](https://github.com/fabriqon-de/sdk/blob/main/docs/hosting.md); Dockerfile.docs builds an unprivileged static nginx image. Documentation tooling is development-only and is excluded from the SDK package.
+VitePress builds [docs.fabriqon.de](https://docs.fabriqon.de/), including guides, API reference, examples, project policies and local search. Run `npm run docs:dev` for authoring or `npm run docs:build` for static output. Documentation uses self-hosted fonts and no tracking/CDN dependency.
 
-### Viewer extensions for interactive websites
+After building, serve the repository root with a static HTTP server and open examples/core/ or examples/browser/. These examples need no App backend. Deployment uses Dockerfile.docs and the existing landingpage stack's docs service, not a second Home Assistant or Studio instance. [Hosting and live-update verification](https://docs.fabriqon.de/hosting).
 
-The optional viewer accepts an existing canvas and supports pause, explicit camera positions, custom connection geometry, and scene/frame hooks. Websites can retain their visual design while the SDK owns rendering, picking and resource cleanup. Core still needs no external runtime packages. See the [viewer guide](docs/guide/viewer.md) for API details and ownership rules. `npm run test:viewer` exercises these features in a real browser; use `CHROMIUM_PATH` for an existing Chromium installation.
+A source merge or successful CI does not automatically update the live documentation. New pages appear after the intended SDK stand is included and the docs service is rebuilt.
 
-## Sensor import contract (proposal)
+## Development and community
 
-Versioned JSON Schemas define sensor catalogs, explicit model bindings and transient runtime state. The MQTT Discovery mapping and user flow (select a model sensor → see current state → open history → reach its source) are specified in [the sensor guide](docs/guide/sensors.md). Examples cover numeric and binary sensors, retained values, disconnection and invalid payloads. This adds static interchange contracts and development conformance tests; no MQTT connection, live UI, history database or Home Assistant integration is shipped. Core and DXF remain dependency-free. The schemas are included in the package under contracts/ and served by the built documentation.
+```sh
+npm run build
+npm test
+npm run test:package
+npm run docs:build
+npx playwright install chromium
+npm run test:docs
+npm run test:viewer
+```
+
+Use CHROMIUM_PATH=/usr/bin/chromium for an installed browser. Run relevant checks for a focused change; do not claim unexecuted checks passed.
+
+- [Contributing](CONTRIBUTING.md): setup, architecture boundaries, checks and PR expectations.
+- [Support](SUPPORT.md): minimal reproductions and the right repository.
+- [Security policy](SECURITY.md): private reporting and supported-source scope.
+- [Code of Conduct](CODE_OF_CONDUCT.md) and [governance](GOVERNANCE.md).
+- [Roadmap](https://docs.fabriqon.de/roadmap), [release preparation](https://docs.fabriqon.de/releases) and [changelog](CHANGELOG.md).
+
+Preserve MIT and third-party notices. Do not contribute credentials, customer plans, private App sources or material you do not have permission to share.

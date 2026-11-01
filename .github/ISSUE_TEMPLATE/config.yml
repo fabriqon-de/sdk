@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SDK documentation
+    url: https://docs.fabriqon.de/
+    about: Guides, API reference and examples.
+  - name: Security reporting policy
+    url: https://github.com/fabriqon-de/sdk/blob/main/SECURITY.md
+    about: Use the private reporting route described in the policy for suspected vulnerabilities.

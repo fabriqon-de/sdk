@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose a focused improvement or public API change.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the task you want to accomplish and the current workaround.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include an example API or input/output when useful.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Alternatives and compatibility
+      description: Consider formats, runtime dependencies and whether this belongs in SDK, Studio or Haus Blick.

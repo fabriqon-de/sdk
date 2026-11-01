@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a reproducible SDK or documentation problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "For vulnerabilities, follow SECURITY.md instead of posting details here. Use synthetic data without credentials or private plans."
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options: [Core, Drawing import, Viewer, Sensor contracts, Documentation, Other]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: SDK version or source commit
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include steps, a small code example or an anonymized fixture.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and relevant logs
+      description: Node, OS, browser, Three.js and WebGL details where relevant. Remove secrets.

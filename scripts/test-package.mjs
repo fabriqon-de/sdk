@@ -10,6 +10,7 @@ try {
   const manifest = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }));
   assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
   assert(manifest[0].files.some(file => file.path === 'LICENSE'), 'SDK package must contain its MIT license');
+  for(const name of ['CHANGELOG.md','CONTRIBUTING.md','SECURITY.md','CODE_OF_CONDUCT.md','SUPPORT.md','GOVERNANCE.md']) assert(manifest[0].files.some(file=>file.path===name),`SDK package must include ${name}`);
   for(const name of ['sensor-catalog','sensor-bindings','sensor-state']) assert(manifest[0].files.some(file=>file.path===`contracts/${name}.v1.schema.json`),'SDK package must contain each sensor contract');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);

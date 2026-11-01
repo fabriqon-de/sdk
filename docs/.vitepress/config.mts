@@ -19,7 +19,8 @@ export default defineConfig({
     sidebar: [
       { text: 'SDK kennenlernen', items: [{ text: 'Überblick', link: '/overview' }, { text: 'Schnellstart', link: '/guide/start' }, { text: 'Core & Datenmodell', link: '/guide/core' }, { text: 'Optionaler Viewer', link: '/guide/viewer' }, { text: 'DXF-Grundrisse', link: '/guide/drawing' }, { text: 'Interaktives Beispiel', link: '/examples' }] },
       { text: 'Referenz & Integrationen', items: [{ text: 'API & Grenzen', link: '/api' }, { text: 'Studio & Demo', link: '/studio' }, { text: 'Lokales MCP', link: '/mcp' }, { text: 'Sensoren & MQTT Discovery', link: '/guide/sensors' }, { text: 'Haus Blick', link: '/haus-blick' }] },
-      { text: 'Projekt & Betrieb', items: [{ text: 'Dokumentation bereitstellen', link: '/hosting' }, { text: 'MIT-Lizenz', link: '/license' }] }
+      { text: 'Projekt & Community', items: [{ text: 'Architektur', link: '/architecture' }, { text: 'Mitwirken', link: '/contributing' }, { text: 'Support', link: '/support' }, { text: 'Security', link: '/security' }, { text: 'Code of Conduct', link: '/code-of-conduct' }, { text: 'Governance', link: '/governance' }, { text: 'Changelog', link: '/changelog' }, { text: 'Roadmap', link: '/roadmap' }] },
+      { text: 'Betrieb & Releases', items: [{ text: 'Dokumentation bereitstellen', link: '/hosting' }, { text: 'Versionierung & Releases', link: '/releases' }, { text: 'MIT-Lizenz', link: '/license' }] }
     ],
     socialLinks: [{ icon: 'github', link: 'https://github.com/fabriqon-de/sdk' }],
     search: { provider: 'local', options: { translations: { button: { buttonText: 'Suchen', buttonAriaLabel: 'Dokumentation durchsuchen' }, modal: { noResultsText: 'Keine Treffer für', resetButtonTitle: 'Suche zurücksetzen', footer: { selectText: 'auswählen', navigateText: 'navigieren', closeText: 'schließen' } } } } },

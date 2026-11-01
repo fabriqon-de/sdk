@@ -28,7 +28,13 @@
     "docs/api.md",
     "README.md",
     "LICENSE",
-    "contracts"
+    "contracts",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "SUPPORT.md",
+    "GOVERNANCE.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.core.json && tsc -p tsconfig.json",

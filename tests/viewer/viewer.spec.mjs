@@ -79,3 +79,17 @@ test('reduced motion, camera keyboard mode and context loss',async({page})=>{
   await page.evaluate(()=>context.renderer.getContext().getExtension('WEBGL_lose_context').loseContext());
   await expect.poll(()=>page.evaluate(()=>stats.contextLost)).toBe(1);
 });
+
+
+test('frame budget limits work without slowing animation time', async ({page})=>{
+  await start(page,{maxFps:20});
+  const measured=await page.evaluate(async()=>{
+    const begin=stats.frames, time=stats.elapsed;
+    await new Promise(resolve=>setTimeout(resolve,600));
+    return {frames:stats.frames-begin,elapsed:stats.elapsed-time};
+  });
+  expect(measured.frames).toBeGreaterThan(2);
+  expect(measured.frames).toBeLessThanOrEqual(15);
+  expect(measured.elapsed).toBeGreaterThan(.35);
+  expect(measured.elapsed).toBeLessThan(1.5);
+});

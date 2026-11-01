@@ -1,0 +1,17 @@
+[
+  {
+    "topic": "lab/env-01/availability",
+    "payload": "online",
+    "retained": false
+  },
+  {
+    "topic": "lab/env-01/state",
+    "payload": "{\"temperature\":22.4,\"humidity\":47.2}",
+    "retained": false
+  },
+  {
+    "topic": "lab/door-01/contact",
+    "payload": "OPEN",
+    "retained": false
+  }
+]

@@ -56,3 +56,23 @@ test('WebGL failure leaves a useful guide and fallback', async ({page}) => {
   await expect(page.getByRole('alert')).toContainText('WebGL-fähigen Browser');
   await expect(page.locator('h1')).toHaveText('Interaktives SDK-Beispiel');
 });
+
+
+test('sensor contract guide and standalone JSON Schemas are available without JavaScript',async({browser})=>{
+  const context=await browser.newContext({javaScriptEnabled:false});
+  const page=await context.newPage();
+  try {
+    await page.goto('/guide/sensors');
+    await expect(page.locator('h1')).toContainText('Sensorimport');
+    await expect(page.locator('.vp-doc')).toContainText('kein neuer MQTT-Client');
+    await expect(page.locator('.vp-doc')).toContainText('{{ value_json.temperature }}');
+    await expect(page.locator('.vp-doc')).toContainText('Sensor im Modell auswählen');
+    for(const name of ['sensor-catalog','sensor-bindings','sensor-state']){
+      const response=await page.request.get(`/contracts/${name}.v1.schema.json`);
+      expect(response.status()).toBe(200);
+      const schema=await response.json();
+      expect(schema.$id).toBe(`https://docs.fabriqon.de/contracts/${name}.v1.schema.json`);
+      expect(schema.additionalProperties).toBe(false);
+    }
+  }finally{await context.close();}
+});

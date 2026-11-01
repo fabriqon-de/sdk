@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "fabriqon.sensor-bindings",
+  "catalogId": "catalog-home",
+  "projectId": "house-model-01",
+  "revision": 3,
+  "modelRevision": 12,
+  "bindings": [
+    {
+      "id": "binding.temperature",
+      "signalId": "signal.temperature",
+      "assetId": "asset-climate-01",
+      "displayName": "Arbeitszimmer · Temperatur",
+      "links": {
+        "history": {
+          "label": "Temperaturverlauf in Grafana",
+          "url": "https://grafana.example.test/d/climate/room?var-signal=env-01-temperature&from=now-24h&to=now"
+        },
+        "source": {
+          "label": "Gerät öffnen",
+          "url": "https://devices.example.test/env-01"
+        }
+      }
+    },
+    {
+      "id": "binding.humidity",
+      "signalId": "signal.humidity",
+      "assetId": "asset-climate-01"
+    },
+    {
+      "id": "binding.door",
+      "signalId": "signal.door",
+      "assetId": "asset-door-01"
+    }
+  ]
+}

@@ -1,0 +1,458 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.fabriqon.de/contracts/sensor-catalog.v1.schema.json",
+  "title": "sensor-catalog v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "fabriqon.sensor-catalog"
+    },
+    "catalogId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "maxLength": 40
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "kind": {
+            "enum": [
+              "mqtt-discovery",
+              "home-assistant",
+              "csv",
+              "json"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "discoveryPrefix": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name"
+        ]
+      },
+      "maxItems": 64,
+      "minItems": 1
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "sourceId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "externalIds": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "const": "identifier"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512,
+                      "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "value"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "const": "connection"
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512,
+                      "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "type",
+                    "value"
+                  ]
+                }
+              ]
+            },
+            "maxItems": 64,
+            "minItems": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "manufacturer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "model": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "suggestedArea": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "configurationUrlCandidate": {
+            "type": "string",
+            "format": "uri",
+            "minLength": 8,
+            "maxLength": 2048,
+            "pattern": "^https?://[^/@\\s?#]+(?:[/?#][^\\s]*)?$"
+          }
+        },
+        "required": [
+          "id",
+          "sourceId",
+          "externalIds",
+          "name"
+        ]
+      },
+      "maxItems": 2000,
+      "minItems": 0
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "sourceId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "deviceId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "identity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": [
+                  "unique-id",
+                  "discovery-topic",
+                  "entity-id",
+                  "external-id"
+                ]
+              },
+              "component": {
+                "enum": [
+                  "sensor",
+                  "binary_sensor"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048,
+                "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+              }
+            },
+            "required": [
+              "kind",
+              "component",
+              "value"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "dataType": {
+            "enum": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "deviceClass": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+          },
+          "stateClass": {
+            "enum": [
+              "measurement",
+              "total",
+              "total_increasing"
+            ]
+          },
+          "lifecycle": {
+            "enum": [
+              "active",
+              "removed"
+            ]
+          },
+          "staleAfterSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31536000
+          },
+          "mqtt": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "discoveryTopic": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "pattern": "^[^\\u0000-\\u001f\\u007f+#]+$"
+              },
+              "componentKey": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+              },
+              "stateTopic": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "pattern": "^[^\\u0000-\\u001f\\u007f+#]+$"
+              },
+              "selector": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "kind": {
+                        "const": "text"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "kind": {
+                        "const": "json-pointer"
+                      },
+                      "pointer": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "pattern": "^(?:/(?:[^~/\\u0000-\\u001f]|~[01])*)*$"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "pointer"
+                    ]
+                  }
+                ]
+              },
+              "booleanPayloads": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "on": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                  },
+                  "off": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                  }
+                },
+                "required": [
+                  "on",
+                  "off"
+                ]
+              },
+              "availability": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "mode": {
+                    "enum": [
+                      "all",
+                      "any",
+                      "latest"
+                    ]
+                  },
+                  "topics": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "topic": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 1024,
+                          "pattern": "^[^\\u0000-\\u001f\\u007f+#]+$"
+                        },
+                        "online": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                        },
+                        "offline": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+                        }
+                      },
+                      "required": [
+                        "topic",
+                        "online",
+                        "offline"
+                      ]
+                    },
+                    "maxItems": 32,
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "mode",
+                  "topics"
+                ]
+              },
+              "expireAfterSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 31536000
+              }
+            },
+            "required": [
+              "discoveryTopic",
+              "stateTopic",
+              "selector"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "sourceId",
+          "identity",
+          "name",
+          "dataType",
+          "lifecycle"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "dataType": {
+                  "not": {
+                    "const": "number"
+                  }
+                }
+              },
+              "required": [
+                "dataType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "unit": false,
+                "stateClass": false
+              }
+            }
+          }
+        ]
+      },
+      "maxItems": 10000,
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "catalogId",
+    "revision",
+    "generatedAt",
+    "sources",
+    "devices",
+    "signals"
+  ]
+}

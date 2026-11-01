@@ -68,3 +68,7 @@ The VitePress documentation targets https://docs.fabriqon.de and includes guides
 ### Viewer extensions for interactive websites
 
 The optional viewer accepts an existing canvas and supports pause, explicit camera positions, custom connection geometry, and scene/frame hooks. Websites can retain their visual design while the SDK owns rendering, picking and resource cleanup. Core still needs no external runtime packages. See the [viewer guide](docs/guide/viewer.md) for API details and ownership rules. `npm run test:viewer` exercises these features in a real browser; use `CHROMIUM_PATH` for an existing Chromium installation.
+
+## Sensor import contract (proposal)
+
+Versioned JSON Schemas define sensor catalogs, explicit model bindings and transient runtime state. The MQTT Discovery mapping and user flow (select a model sensor → see current state → open history → reach its source) are specified in [the sensor guide](docs/guide/sensors.md). Examples cover numeric and binary sensors, retained values, disconnection and invalid payloads. This adds static interchange contracts and development conformance tests; no MQTT connection, live UI, history database or Home Assistant integration is shipped. Core and DXF remain dependency-free. The schemas are included in the package under contracts/ and served by the built documentation.

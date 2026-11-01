@@ -10,6 +10,7 @@ try {
   const manifest = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }));
   assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
   assert(manifest[0].files.some(file => file.path === 'LICENSE'), 'SDK package must contain its MIT license');
+  for(const name of ['sensor-catalog','sensor-bindings','sensor-state']) assert(manifest[0].files.some(file=>file.path===`contracts/${name}.v1.schema.json`),'SDK package must contain each sensor contract');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);
   writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@fabriqon/sdk': `file:${archive}` } }));
@@ -18,14 +19,17 @@ try {
     import assert from 'node:assert/strict';
     import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@fabriqon/sdk';
     import { importDxf } from '@fabriqon/sdk/drawing';
+    import { readFileSync } from 'node:fs';
+    const catalogSchema=JSON.parse(readFileSync(new URL(import.meta.resolve('@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json')),'utf8'));
+    assert.equal(catalogSchema.properties.kind.const,'fabriqon.sensor-catalog');
     const model = parseSceneModel({schemaVersion:1,name:'Independent',assets:[],connections:[]});
     assert.equal(JSON.parse(serializeSceneModel(model)).name, 'Independent');
     assert.throws(() => parseSceneModel(null), ModelValidationError);
     const text = [0,'SECTION',2,'ENTITIES',0,'LINE',8,'WALLS',10,0,20,0,11,2,21,0,0,'ENDSEC',0,'EOF'].join('\\n')+'\\n';
     assert.equal(importDxf(text,{unit:'m'}).plan.walls.length,1);
-    for(const name of ['three','zod','react','next']) assert.throws(() => import.meta.resolve(name), /Cannot find package/);
+    for(const name of ['three','zod','react','next','ajv','ajv-formats']) assert.throws(() => import.meta.resolve(name), /Cannot find package/);
     assert.equal(typeof document,'undefined');
-    console.log('Packed Core and DXF import work with no external runtime packages.');
+    console.log('Packed Core, DXF and sensor contract files work with no external runtime packages.');
   `);
   execFileSync(process.execPath, [path.join(consumer, 'verify.mjs')], { cwd: consumer, stdio: 'inherit' });
 } finally { rmSync(temporary, { recursive: true, force: true }); }

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /impressum
 Disallow: /datenschutz
-Sitemap: https://docs.plantframe.de/sitemap.xml
+Sitemap: https://docs.fabriqon.de/sitemap.xml

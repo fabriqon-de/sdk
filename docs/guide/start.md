@@ -5,7 +5,7 @@
 Voraussetzung ist Node.js ab Version 22. Die CI prüft Node 22, 24 und 26. Ein Registry-Paket ist noch nicht veröffentlicht; verwende den Quellcode:
 
 ```sh
-git clone https://github.com/plantframe-de/sdk.git
+git clone https://github.com/fabriqon-de/sdk.git
 cd sdk
 npm ci
 npm run build
@@ -13,10 +13,10 @@ npm test
 npm pack
 ```
 
-`npm pack` erzeugt ein lokales Archiv wie `plantframe-sdk-0.1.0.tgz`. In deiner eigenen Anwendung installierst du dieses Archiv:
+`npm pack` erzeugt ein lokales Archiv wie `fabriqon-sdk-0.1.0.tgz`. In deiner eigenen Anwendung installierst du dieses Archiv:
 
 ```sh
-npm install /absoluter/pfad/sdk/plantframe-sdk-0.1.0.tgz
+npm install /absoluter/pfad/sdk/fabriqon-sdk-0.1.0.tgz
 ```
 
 Für Core und DXF-Import werden keine Fremdpakete als Laufzeit-Abhängigkeit installiert. Die Entwicklungswerkzeuge im Quell-Checkout sind davon getrennt.
@@ -24,7 +24,7 @@ Für Core und DXF-Import werden keine Fremdpakete als Laufzeit-Abhängigkeit ins
 ## 2. Modell prüfen und ausgeben
 
 ```js
-import { parseSceneModel, serializeSceneModel } from '@plantframe/sdk';
+import { parseSceneModel, serializeSceneModel } from '@fabriqon/sdk';
 
 const model = parseSceneModel({
   schemaVersion: 1,

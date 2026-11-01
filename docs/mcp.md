@@ -7,7 +7,7 @@ Ein berechtigter lokaler App-Checkout mit installierten Abhängigkeiten, gebaute
 ```json
 {
   "mcpServers": {
-    "plantframe": {
+    "fabriqon": {
       "command": "node",
       "args": ["/pfad/zum/app/scripts/mcp-server.mjs", "--directory", "/pfad/zu/projektexporten"]
     }

@@ -9,7 +9,7 @@ npm install 'three@^0.186.0'
 Nach Installation des lokal gebauten SDK-Pakets:
 
 ```js
-import { createViewer } from '@plantframe/sdk/viewer';
+import { createViewer } from '@fabriqon/sdk/viewer';
 
 const viewer = createViewer(document.querySelector('#scene'), {
   onSelect: id => console.log(id)

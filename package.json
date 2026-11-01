@@ -1,0 +1,57 @@
+{
+  "name": "@plantframe/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "description": "Dependency-free PlantFrame models and DXF import with an optional Three.js viewer",
+  "exports": {
+    ".": {
+      "types": "./dist/model.d.ts",
+      "import": "./dist/model.js"
+    },
+    "./viewer": {
+      "types": "./dist/viewer.d.ts",
+      "import": "./dist/viewer.js"
+    },
+    "./drawing": {
+      "types": "./dist/drawing.d.ts",
+      "import": "./dist/drawing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "examples",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.core.json && tsc -p tsconfig.json",
+    "test": "vitest run test",
+    "test:package": "npm run build && node scripts/test-package.mjs"
+  },
+  "peerDependencies": {
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11",
+    "vite": "^7.3.1",
+    "@types/node": "^26.6.5",
+    "three": "^0.186.1"
+  },
+  "peerDependenciesMeta": {
+    "three": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plantframe-de/sdk.git"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

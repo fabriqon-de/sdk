@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
-const temporary = mkdtempSync(path.join(tmpdir(), 'plantframe-core-'));
+const temporary = mkdtempSync(path.join(tmpdir(), 'fabriqon-core-'));
 try {
   const manifest = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }));
   assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
@@ -13,15 +13,15 @@ try {
   for(const name of ['sensor-catalog','sensor-bindings','sensor-state']) assert(manifest[0].files.some(file=>file.path===`contracts/${name}.v1.schema.json`),'SDK package must contain each sensor contract');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);
-  writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@plantframe/sdk': `file:${archive}` } }));
+  writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module', dependencies: { '@fabriqon/sdk': `file:${archive}` } }));
   execFileSync('npm', ['install', '--omit=dev', '--ignore-scripts', '--offline', '--no-audit', '--no-fund', '--package-lock=false'], { cwd: consumer, stdio: 'pipe' });
   writeFileSync(path.join(consumer, 'verify.mjs'), `
     import assert from 'node:assert/strict';
-    import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@plantframe/sdk';
-    import { importDxf } from '@plantframe/sdk/drawing';
+    import { parseSceneModel, serializeSceneModel, ModelValidationError } from '@fabriqon/sdk';
+    import { importDxf } from '@fabriqon/sdk/drawing';
     import { readFileSync } from 'node:fs';
-    const catalogSchema=JSON.parse(readFileSync(new URL(import.meta.resolve('@plantframe/sdk/contracts/sensor-catalog.v1.schema.json')),'utf8'));
-    assert.equal(catalogSchema.properties.kind.const,'plantframe.sensor-catalog');
+    const catalogSchema=JSON.parse(readFileSync(new URL(import.meta.resolve('@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json')),'utf8'));
+    assert.equal(catalogSchema.properties.kind.const,'fabriqon.sensor-catalog');
     const model = parseSceneModel({schemaVersion:1,name:'Independent',assets:[],connections:[]});
     assert.equal(JSON.parse(serializeSceneModel(model)).name, 'Independent');
     assert.throws(() => parseSceneModel(null), ModelValidationError);

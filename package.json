@@ -1,10 +1,10 @@
 {
-  "name": "@plantframe/sdk",
+  "name": "@fabriqon/sdk",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "Dependency-free PlantFrame models and DXF import with an optional Three.js viewer",
+  "description": "Dependency-free Fabriqon models and DXF import with an optional Three.js viewer",
   "exports": {
     ".": {
       "types": "./dist/model.d.ts",
@@ -63,10 +63,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/plantframe-de/sdk.git"
+    "url": "https://github.com/fabriqon-de/sdk.git"
   },
   "engines": {
     "node": ">=22"
   },
-  "homepage": "https://docs.plantframe.de/"
+  "homepage": "https://docs.fabriqon.de/"
 }

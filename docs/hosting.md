@@ -24,7 +24,7 @@ docker compose up -d --build --wait --wait-timeout 600
 
 Docker baut Docs standardmäßig direkt aus dem öffentlichen SDK-Git-Repository (main); ein zusätzlicher SDK-Checkout oder Token ist dafür nicht erforderlich. Der Build benötigt Internetzugriff. SDK_SOURCE_DIR kann alternativ einen vorhandenen lokalen Checkout oder eine öffentliche Git-Referenz mit Commit-SHA wählen. Bereits konfigurierte Werte bleiben gültig; lokale Checkouts müssen aktuell sein. Das private App-Repository wird weiterhin nur aus dem vorhandenen autorisierten APP_SOURCE_DIR gebaut.
 
-Der vorhandene Traefik übernimmt TLS über das konfigurierte Proxy-Netz. DNS für docs.plantframe.de muss auf diesen Server zeigen. Die Dokumentation hat keine Laufzeit-Abhängigkeit von App, Datenbank oder Home Assistant.
+Der vorhandene Traefik übernimmt TLS über das konfigurierte Proxy-Netz. DNS für docs.fabriqon.de muss auf diesen Server zeigen. Die Dokumentation hat keine Laufzeit-Abhängigkeit von App, Datenbank oder Home Assistant.
 
 Nur die Dokumentation aktualisieren:
 
@@ -45,8 +45,8 @@ Die Dokumentation ist dann unter http://127.0.0.1:8081 erreichbar. Die früheren
 ## Eigenständiges Image
 
 ```sh
-docker build -f Dockerfile.docs -t plantframe-docs .
-docker run --rm --read-only --tmpfs /tmp:uid=101,gid=101,mode=1777 -p 127.0.0.1:8081:8080 plantframe-docs
+docker build -f Dockerfile.docs -t fabriqon-docs .
+docker run --rm --read-only --tmpfs /tmp:uid=101,gid=101,mode=1777 -p 127.0.0.1:8081:8080 fabriqon-docs
 ```
 
 Die Bereitstellung führt kein automatisches Live-Update durch. Nach Änderungen SDK-Checkout aktualisieren und den Docs-Dienst neu bauen. Quellen, `.env`, Buildcache und Node-Abhängigkeiten gehören nicht ins Laufzeitimage.

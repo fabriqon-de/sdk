@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "kind": "plantframe.sensor-bindings",
+  "kind": "fabriqon.sensor-bindings",
   "catalogId": "catalog-home",
   "projectId": "house-model-01",
   "revision": 3,

@@ -21,7 +21,7 @@ Die vorhandenen SDK-Modelle bleiben bei schemaVersion 1, Studio-Projektdateien b
 - `/contracts/sensor-bindings.v1.schema.json`
 - `/contracts/sensor-state.v1.schema.json`
 
-Die Dateien werden mit der Dokumentation unter denselben Pfaden ausgeliefert und im SDK-Paket unter `contracts/` mitgegeben. Nach lokalem Bau und Paketinstallation kann ein Werkzeug `import.meta.resolve('@plantframe/sdk/contracts/sensor-catalog.v1.schema.json')` verwenden. Das ist ein Dateiformat, kein neuer MQTT-Client und kein installierbares Registry-Release.
+Die Dateien werden mit der Dokumentation unter denselben Pfaden ausgeliefert und im SDK-Paket unter `contracts/` mitgegeben. Nach lokalem Bau und Paketinstallation kann ein Werkzeug `import.meta.resolve('@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json')` verwenden. Das ist ein Dateiformat, kein neuer MQTT-Client und kein installierbares Registry-Release.
 
 Alle Dokumente haben `schemaVersion: 1` und einen eindeutigen `kind`. Unbekannte Felder sind Fehler. Strukturprüfungen reichen nicht für Referenzen und Identitäten: Die zusätzlichen Regeln unten gelten ebenfalls. `scripts/validate-sensor-contracts.mjs` enthält die durch `npm test` ausgeführten Entwicklungschecks, kein zusätzlicher Runtime-Entry-Point. Ajv und Formatprüfungen sind reine Entwicklungsabhängigkeiten; SDK-Core und DXF bleiben ohne externe Laufzeitpakete.
 

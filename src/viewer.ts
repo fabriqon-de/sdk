@@ -30,7 +30,7 @@ export interface ViewerOptions {
   onFrame?: (context: ViewerFrameContext) => void;
   onContextLost?: () => void;
 }
-export interface PlantFrameViewer {
+export interface FabriqonViewer {
   setModel(model: SceneModel, options?: { fit?: boolean }): void;
   select(id: string | null): void;
   fit(): void;
@@ -39,6 +39,9 @@ export interface PlantFrameViewer {
   setAutoRotate(enabled: boolean): void;
   dispose(): void;
 }
+
+/** @deprecated Use FabriqonViewer. Retained for source compatibility. */
+export type PlantFrameViewer = FabriqonViewer;
 
 function disposeObjects(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
@@ -72,7 +75,7 @@ export function createDrawingObject(input: DrawingPlan): THREE.Group {
   return group;
 }
 
-export function createViewer(container: HTMLElement, options: ViewerOptions = {}): PlantFrameViewer {
+export function createViewer(container: HTMLElement, options: ViewerOptions = {}): FabriqonViewer {
   if (typeof window === 'undefined' || !container || typeof container.append !== 'function' || typeof ResizeObserver === 'undefined') throw new Error('Viewer requires a browser element and ResizeObserver.');
   const maxFps = options.maxFps ?? 60;
   if (!Number.isFinite(maxFps) || maxFps < 1 || maxFps > 60) throw new Error('maxFps must be between 1 and 60.');
@@ -82,7 +85,7 @@ export function createViewer(container: HTMLElement, options: ViewerOptions = {}
   const canvas = renderer.domElement;
   canvas.tabIndex = 0;
   if (!options.canvas) canvas.setAttribute('role', 'application');
-  if (!canvas.hasAttribute('aria-label')) canvas.setAttribute('aria-label', 'PlantFrame 3D viewer. Arrow keys select assets; Escape clears selection.');
+  if (!canvas.hasAttribute('aria-label')) canvas.setAttribute('aria-label', 'Fabriqon 3D viewer. Arrow keys select assets; Escape clears selection.');
   if (!options.canvas) {
     canvas.style.display = 'block'; canvas.style.width = '100%'; canvas.style.height = '100%';
   }
@@ -138,7 +141,7 @@ export function createViewer(container: HTMLElement, options: ViewerOptions = {}
       for (const asset of next.assets) {
         const object = options.assetFactory ? options.assetFactory(asset) : createAssetObject(asset);
         object.position.set(asset.position.x, asset.position.y + asset.size.y / 2, asset.position.z);
-        object.userData.plantframeId = asset.id; nextById.set(asset.id, object); staged.add(object);
+        object.userData.fabriqonId = asset.id; nextById.set(asset.id, object); staged.add(object);
       }
       for (const connection of next.connections) {
         const source = nextById.get(connection.sourceId)!, target = nextById.get(connection.targetId)!;
@@ -170,8 +173,8 @@ export function createViewer(container: HTMLElement, options: ViewerOptions = {}
     raycaster.setFromCamera(pointer, camera);
     const hit = raycaster.intersectObjects([...byId.values()], true)[0];
     let object: THREE.Object3D | null = hit?.object ?? null;
-    while (object && !object.userData.plantframeId) object = object.parent;
-    select(object?.userData.plantframeId ?? null);
+    while (object && !object.userData.fabriqonId) object = object.parent;
+    select(object?.userData.fabriqonId ?? null);
   };
   const pointerCancel = () => { down = null; };
   const keyDown = (event: KeyboardEvent) => {

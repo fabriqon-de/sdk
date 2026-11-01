@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress';
+import { existsSync } from 'node:fs';
 
 export default defineConfig({
   lang: 'de-DE', title: 'PlantFrame Docs', description: 'Dokumentation für PlantFrame SDK, Core, Three.js-Viewer und DXF-Import.',
-  cleanUrls: true, lastUpdated: true, srcExclude: ['**/AGENTS.md', '**/CLAUDE.md'],
+  cleanUrls: true, lastUpdated: existsSync(new URL('../../.git', import.meta.url)), srcExclude: ['**/AGENTS.md', '**/CLAUDE.md'],
   head: [['link', { rel: 'icon', href: '/favicon.svg' }], ['meta', { name: 'theme-color', content: '#0f1720' }]],
   sitemap: { hostname: 'https://docs.plantframe.de', transformItems: items => items.filter(item => !item.url.includes('404')) },
   transformPageData(page) {

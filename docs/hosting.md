@@ -40,3 +40,5 @@ docker run --rm --read-only --tmpfs /tmp:uid=101,gid=101,mode=1777 -p 127.0.0.1:
 ```
 
 Die Bereitstellung führt kein automatisches Live-Update durch. Nach Änderungen SDK-Checkout aktualisieren und den Docs-Dienst neu bauen. Quellen, `.env`, Buildcache und Node-Abhängigkeiten gehören nicht ins Laufzeitimage.
+
+Änderungsdaten werden nur bei einem vorhandenen Git-Checkout angezeigt. Docker-Buildkontexte und Quellarchive bauen ohne Git-Metadaten; dafür wird weder Git installiert noch das .git-Verzeichnis ins Image kopiert.

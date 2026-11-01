@@ -15,22 +15,32 @@ Die Vorschau verwendet standardmäßig Port 4173. Ein vorhandenes Chromium läss
 
 ## Zusammen mit Landingpage und Demo
 
-Im privaten Landingpage-Checkout liegt `compose.docs.yml`. Der öffentliche SDK-Checkout liegt daneben als `../sdk` oder wird über `SDK_SOURCE_DIR` ausgewählt. `DOCS_DOMAIN` ist standardmäßig `docs.plantframe.de`.
+Die Dokumentation ist fest im Standard-Stack des privaten Landingpage-Repositories enthalten. Es ist keine zusätzliche Docs-Compose-Datei nötig:
 
 ```sh
-# Im Landingpage-Checkout; vorhandene .env beibehalten.
-docker compose -f compose.yml -f compose.docs.yml up -d --build docs
+# Im aktualisierten Landingpage-Checkout; vorhandene .env beibehalten.
+docker compose up -d --build --wait --wait-timeout 600
 ```
 
-Der vorhandene Traefik übernimmt TLS und die Weiterleitung über das konfigurierte Proxy-Netz. DNS für docs.plantframe.de muss auf diesen Server zeigen. Die Dokumentation hat keine Abhängigkeit von App, Datenbank oder Home Assistant. Die bisherigen Dienste lassen sich weiterhin ohne das Docs-Overlay betreiben.
+Docker baut Docs standardmäßig direkt aus dem öffentlichen SDK-Git-Repository (main); ein zusätzlicher SDK-Checkout oder Token ist dafür nicht erforderlich. Der Build benötigt Internetzugriff. SDK_SOURCE_DIR kann alternativ einen vorhandenen lokalen Checkout oder eine öffentliche Git-Referenz mit Commit-SHA wählen. Bereits konfigurierte Werte bleiben gültig; lokale Checkouts müssen aktuell sein. Das private App-Repository wird weiterhin nur aus dem vorhandenen autorisierten APP_SOURCE_DIR gebaut.
 
-Für eine lokale Container-Vorschau ohne vorhandenen Traefik:
+Der vorhandene Traefik übernimmt TLS über das konfigurierte Proxy-Netz. DNS für docs.plantframe.de muss auf diesen Server zeigen. Die Dokumentation hat keine Laufzeit-Abhängigkeit von App, Datenbank oder Home Assistant.
+
+Nur die Dokumentation aktualisieren:
 
 ```sh
-docker compose -f compose.yml -f compose.docs.yml -f compose.local.yml -f compose.docs.local.yml up -d --build docs
+docker compose up -d --build docs
 ```
 
-Die Dokumentation ist dann unter `http://127.0.0.1:8081` erreichbar. Für den gesamten Stack die Services nicht einschränken; dafür werden zusätzlich der autorisierte App-Checkout und die bisherige Demo-Konfiguration benötigt.
+Für eine lokale Vorschau ohne vorhandenen Traefik:
+
+```sh
+docker compose -f compose.yml -f compose.local.yml up -d --build landing docs
+npm run test:container
+npm run test:docs
+```
+
+Die Dokumentation ist dann unter http://127.0.0.1:8081 erreichbar. Die früheren Docs-Overlays bleiben als leere Kompatibilitätsdateien erhalten und sind nicht mehr erforderlich. Die Landingpage-CI prüft die statischen Standarddienste ohne privaten App-Checkout.
 
 ## Eigenständiges Image
 

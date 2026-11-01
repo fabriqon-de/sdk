@@ -9,9 +9,9 @@ test('guides, canonicals and license are available without JavaScript', async ({
       await expect(page.locator('h1')).toContainText(heading);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://docs.fabriqon.de${route}`);
     }
-    await expect(page.locator('.vp-doc')).toContainText('feat/house-planner');
-    await expect(page.locator('.vp-doc')).toContainText('/local_apps/haus_blick/');
-    await expect(page.locator('.vp-doc')).toContainText('nur manuelle Referenzen');
+    await expect(page.locator('.vp-doc')).toContainText('HACS-Dashboard-Karte');
+    await expect(page.locator('.vp-doc')).toContainText('/hacsfiles/haus-blick/haus-blick.js');
+    await expect(page.locator('.vp-doc')).toContainText('hass.states');
     const robots = await (await page.request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /datenschutz');
     const sitemap = await (await page.request.get('/sitemap.xml')).text();

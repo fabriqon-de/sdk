@@ -11,7 +11,7 @@ Diese Übersicht unterscheidet vorhandenen Quellcode, definierte Verträge und w
 | npm-Release | Noch nicht veröffentlicht; private:true schützt vor versehentlicher Veröffentlichung |
 | Sensor-/MQTT-Importformat | Vertragsentwurf mit Schemas und Beispielen auf diesem Entwicklungszweig |
 | MQTT-Brokeradapter, Live-Sensorpanel und Historienadapter | Weitere Umsetzung; nicht durch den Datenvertrag fertiggestellt |
-| Haus Blick | Eigenständiges Add-on; Hausplaner im Entwicklungszweig, reale HA-OS-Abnahme offen |
+| Haus Blick | Neue HACS-Dashboard-Karte mit bestehenden HA-Entitäten und SDK-Viewer; reale HA-/HACS-Abnahme offen |
 | Weitere Zeichnungsformate, beliebige PDF-/Bildauswertung | Nicht Teil des vorhandenen DXF-Parsers |
 | Öffentlicher Remote-MCP | Nicht Teil des SDK; vorhandener lokaler Dateikonnektor gehört zur App |
 
@@ -19,7 +19,7 @@ Diese Übersicht unterscheidet vorhandenen Quellcode, definierte Verträge und w
 
 1. Verträge und öffentliche API anhand echter, anonymisierter Integrationen prüfen und die erste Paket-/Versionsstrategie abschließen.
 2. Den getesteten MQTT-Import an den Sensorvertrag anschließen und Zustands-, Reimport- und Linkverhalten in der Anwendung abnehmen.
-3. Haus Blick auf Home Assistant OS testen; gemeinsame SDK-Komponenten erst mit klarer Adaptergrenze übernehmen.
+3. Haus Blick in einer tatsächlichen HA-/HACS-Instanz abnehmen; SDK-Modell und HA-Entitätsadapter getrennt halten.
 4. Neue Formate oder Renderer anhand konkreter Anwenderfälle ergänzen, ohne den Core mit unnötigen Laufzeitpaketen zu belasten.
 
 Der [Release-Leitfaden](/releases) beschreibt Voraussetzungen für eine tatsächliche Veröffentlichung. Ein Merge oder grüner Build ist weder ein npm-Release noch ein Live-Deployment.

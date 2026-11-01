@@ -29,4 +29,4 @@ Das SDK ist **MIT-lizenziert** und als Quellcode verfügbar. Ein npm-Paket ist n
 
 ## Mitwirken und testen
 
-[Contribution Guide](/contributing), [Support](/support), [Security](/security) und [Code of Conduct](/code-of-conduct) beschreiben die Zusammenarbeit. Architektur, Roadmap, Changelog und Release-Vorbereitung sind über die Navigation erreichbar. Die [Haus-Blick-Testanleitung](/haus-blick) erklärt den derzeitigen lokalen Entwicklungsstand und dessen Grenzen.
+[Contribution Guide](/contributing), [Support](/support), [Security](/security) und [Code of Conduct](/code-of-conduct) beschreiben die Zusammenarbeit. Architektur, Roadmap, Changelog und Release-Vorbereitung sind über die Navigation erreichbar. Die [Haus-Blick-Testanleitung](/haus-blick) erklärt die Installation der neuen HACS-Dashboard-Karte und die ausstehende reale HA-Abnahme.

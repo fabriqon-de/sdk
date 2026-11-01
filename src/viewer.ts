@@ -18,6 +18,8 @@ export interface ViewerOptions {
   canvas?: HTMLCanvasElement;
   onSelect?: (id: string | null) => void;
   autoRotate?: boolean;
+  /** Limit updates and rendering to 1–60 frames per second. Default: 60. */
+  maxFps?: number;
   keyboard?: 'select' | 'camera';
   /** Returned objects and their resources are owned and disposed by this viewer. */
   assetFactory?: (asset: SceneAsset) => THREE.Object3D;
@@ -72,6 +74,8 @@ export function createDrawingObject(input: DrawingPlan): THREE.Group {
 
 export function createViewer(container: HTMLElement, options: ViewerOptions = {}): PlantFrameViewer {
   if (typeof window === 'undefined' || !container || typeof container.append !== 'function' || typeof ResizeObserver === 'undefined') throw new Error('Viewer requires a browser element and ResizeObserver.');
+  const maxFps = options.maxFps ?? 60;
+  if (!Number.isFinite(maxFps) || maxFps < 1 || maxFps > 60) throw new Error('maxFps must be between 1 and 60.');
   const renderer = new THREE.WebGLRenderer({ canvas: options.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
   renderer.setClearColor(options.background ?? 0x0f1720);
@@ -209,8 +213,10 @@ export function createViewer(container: HTMLElement, options: ViewerOptions = {}
     canvas.addEventListener('pointerdown', pointerDown); canvas.addEventListener('pointerup', pointerUp); canvas.addEventListener('pointercancel', pointerCancel); canvas.addEventListener('keydown', keyDown); canvas.addEventListener('webglcontextlost', contextLost);
     document.addEventListener('visibilitychange', resetClock); motion.addEventListener('change', motionChange);
     renderer.setAnimationLoop((time: number) => {
-      const delta = paused || last === null ? 0 : Math.min((time - last) / 1000, .06); last = time;
-      if (!visible || document.hidden || lost) return;
+      if (!visible || document.hidden || lost) { resetClock(); return; }
+      // Leave headroom for scrolling/input; skipping a frame must not slow animation time.
+      if (last !== null && time - last < 1000 / maxFps - .5) return;
+      const delta = paused || last === null ? 0 : Math.min((time - last) / 1000, Math.max(.06, 1 / maxFps)); last = time;
       elapsed += delta; controls.autoRotate = autoRotate && !paused && !motion.matches;
       controls.update(delta); options.onFrame?.({ ...context, delta, elapsed }); renderer.render(scene, camera);
     });

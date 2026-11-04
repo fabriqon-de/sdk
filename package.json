@@ -47,7 +47,7 @@
     "test:viewer": "npm run build && playwright test --config playwright.viewer.config.mjs"
   },
   "peerDependencies": {
-    "three": "^0.186.0"
+    "three": "^0.186.0 || ^0.187.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

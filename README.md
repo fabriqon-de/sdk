@@ -55,7 +55,7 @@ The parser returns a detached copy and rejects invalid types, references, bounds
 
 ## Optional viewer
 
-Install a compatible Three.js (`^0.186.0`) in the consuming application. The container needs a nonzero height; initialize the viewer only in a browser.
+Install a compatible Three.js (`^0.186.0 || ^0.187.0`) in the consuming application. The container needs a nonzero height; initialize the viewer only in a browser.
 
 ```js
 import { createViewer } from '@fabriqon/sdk/viewer';

@@ -1,6 +1,6 @@
 # Optionaler Three.js-Viewer
 
-Nur wer eine 3D-Darstellung benötigt, installiert Three.js ausdrücklich in der eigenen Anwendung. Der Viewer unterstützt die im SDK-Paket angegebene Reihe `^0.186.0`:
+Nur wer eine 3D-Darstellung benötigt, installiert Three.js ausdrücklich in der eigenen Anwendung. Der Viewer unterstützt die im SDK-Paket angegebenen Reihen `^0.186.0 || ^0.187.0`:
 
 ```sh
 npm install 'three@^0.186.0'

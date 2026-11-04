@@ -13,7 +13,10 @@ Notable changes are recorded here. This project is still an unpublished developm
 
 ### Proposals on this development branch
 
-- Version 1 sensor catalog, model-binding and runtime-state contracts, with MQTT Discovery mapping, synthetic examples and development conformance checks. This is not a broker connector or live Studio integration.
+- `@fabriqon/sdk/sensors`: dependency-free validation of the sensor contract, strict JSON, Home Assistant discovery import (scan, preview, explicit adoption), decoding, availability and freshness evaluation with stable reason codes, and a network-free connector.
+- `@fabriqon/sdk/sensors/mqtt`: read-only MQTT bridge with an injected client (no MQTT dependency), exact approved topics, refusal detection from SUBACK, rate and size limits, idle close, replay of the last message and a bounded discovery scan. Tested with a simulated client, not against a real broker in this repository.
+
+- Version 1 sensor catalog, model-binding and runtime-state contracts, with MQTT Discovery mapping, synthetic examples and development conformance checks. Studio integration lives in the application, not in the SDK.
 
 ### Project documentation
 

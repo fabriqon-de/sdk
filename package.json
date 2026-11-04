@@ -14,6 +14,14 @@
       "types": "./dist/viewer.d.ts",
       "import": "./dist/viewer.js"
     },
+    "./sensors": {
+      "types": "./dist/sensors/index.d.ts",
+      "import": "./dist/sensors/index.js"
+    },
+    "./sensors/mqtt": {
+      "types": "./dist/sensors/mqtt.d.ts",
+      "import": "./dist/sensors/mqtt.js"
+    },
     "./drawing": {
       "types": "./dist/drawing.d.ts",
       "import": "./dist/drawing.js"

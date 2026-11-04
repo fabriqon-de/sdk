@@ -11,6 +11,7 @@ try {
   assert(!manifest[0].files.some(file => file.path.startsWith('docs/.vitepress/')), 'Documentation build output must not enter the SDK archive');
   assert(manifest[0].files.some(file => file.path === 'LICENSE'), 'SDK package must contain its MIT license');
   for(const name of ['CHANGELOG.md','CONTRIBUTING.md','SECURITY.md','CODE_OF_CONDUCT.md','SUPPORT.md','GOVERNANCE.md']) assert(manifest[0].files.some(file=>file.path===name),`SDK package must include ${name}`);
+  for(const name of ['sensors/index','sensors/mqtt']) assert(manifest[0].files.some(file=>file.path===`dist/${name}.js`)&&manifest[0].files.some(file=>file.path===`dist/${name}.d.ts`),`SDK package must contain dist/${name}`);
   for(const name of ['sensor-catalog','sensor-bindings','sensor-state']) assert(manifest[0].files.some(file=>file.path===`contracts/${name}.v1.schema.json`),'SDK package must contain each sensor contract');
   const archive = path.join(temporary, manifest[0].filename), consumer = path.join(temporary, 'consumer');
   mkdirSync(consumer);
@@ -28,6 +29,13 @@ try {
     assert.throws(() => parseSceneModel(null), ModelValidationError);
     const text = [0,'SECTION',2,'ENTITIES',0,'LINE',8,'WALLS',10,0,20,0,11,2,21,0,0,'ENDSEC',0,'EOF'].join('\\n')+'\\n';
     assert.equal(importDxf(text,{unit:'m'}).plan.walls.length,1);
+    const sensors = await import('@fabriqon/sdk/sensors');
+    const catalog = JSON.parse(readFileSync(new URL(import.meta.resolve('@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json')).pathname.replace(/contracts.*$/, 'examples/sensors/catalog.json'), 'utf8'));
+    assert.equal(sensors.parseSensorCatalog(catalog).ok, true);
+    assert.equal(sensors.parseSensorCatalog({}).ok, false);
+    assert.deepEqual(sensors.planSubscriptions(catalog, { sourceId: 'mqtt-home', allowedTopicPrefixes: ['lab'] }).topics, ['lab/door-01/contact','lab/env-01/availability','lab/env-01/state']);
+    const { MqttSourceLink } = await import('@fabriqon/sdk/sensors/mqtt');
+    assert.equal(typeof MqttSourceLink, 'function');
     for(const name of ['three','zod','react','next','ajv','ajv-formats']) assert.throws(() => import.meta.resolve(name), /Cannot find package/);
     assert.equal(typeof document,'undefined');
     console.log('Packed Core, DXF and sensor contract files work with no external runtime packages.');

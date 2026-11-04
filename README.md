@@ -75,7 +75,7 @@ Selection, explicit camera views, pause, custom geometry/connection factories an
 
 The DXF importer handles prepared ASCII LINE/straight LWPOLYLINE walls and closed room contours on documented layers. It checks units and geometry; it does not claim arbitrary PDF/image recognition or complete DXF/IFC support. [Drawing guide](https://docs.fabriqon.de/guide/drawing).
 
-The sensor contract proposal separates catalog facts, model bindings and transient runtime values. It specifies MQTT Discovery mapping and the flow **select sensor → inspect state → open history → reach its source**. Native/normalized synthetic examples are in examples/sensors/. [Sensor guide](https://docs.fabriqon.de/guide/sensors).
+The sensor contract proposal separates catalog facts, model bindings and transient runtime values. It specifies MQTT Discovery mapping and the flow **select sensor → inspect state → open history → reach its source**. Native/normalized synthetic examples are in examples/sensors/. The optional `@fabriqon/sdk/sensors` module validates the contract, imports discovery and evaluates freshness without runtime dependencies. `@fabriqon/sdk/sensors/mqtt` adds a read-only MQTT bridge that takes your own client. [Sensor guide](https://docs.fabriqon.de/guide/sensors).
 
 ## Documentation and examples
 

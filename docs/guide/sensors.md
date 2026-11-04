@@ -1,6 +1,6 @@
 # Sensorimport und Datenquellen
 
-**Status: versionierter Vertragsentwurf v1 mit JSON-Schemas, Beispielen und Konformitätsprüfungen.** Ein MQTT-Netzwerkclient, eine Zeitreihendatenbank, ein Live-Panel in Studio und eine Home-Assistant-Verbindung sind hiermit noch nicht implementiert. Ein bereits separat getesteter Importer muss gegen diesen Vertrag abgeglichen werden.
+**Status: versionierter Vertrag v1 mit JSON-Schemas und Beispielen, dazu ein abhängigkeitsfreies Laufzeitmodul (`@fabriqon/sdk/sensors`) und eine MQTT-Brücke mit injiziertem Client (`@fabriqon/sdk/sensors/mqtt`).** Eine Zeitreihendatenbank, ein Live-Panel und eine Home-Assistant-Verbindung gehören nicht zum SDK. Beides sind Entwicklungsstand im Quell-Repository, noch kein veröffentlichtes Paket.
 
 Der Ablauf für den Nutzer lautet: **Sensor im Modell auswählen → Zustand und Alter sehen → Verlauf öffnen → Quellsystem erreichen.** Die Website oder App ersetzt dabei weder den Broker noch das bestehende Messwertsystem.
 
@@ -116,6 +116,46 @@ Retained-Werte dürfen nur dann fresh sein, wenn observedAt bekannt ist und ein 
 5. **Quellsystem öffnen:** bestätigtes Ziel mit erkennbarem Anbieter/Host; reguläre Anmeldung im Zielsystem. Ein Fehler beim Verlauf oder ein fehlender Link verändert den Sensorzustand nicht.
 
 History-Speicherung erhält nur akzeptierte Messereignisse. Die Adapter-Ereignisidentität ist (streamId, signalId, sequence); wiederholte Übermittlung desselben Envelopes erzeugt keinen weiteren Punkt. Gleiche Werte in verschiedenen echten Messereignissen bleiben hingegen gültige Messpunkte. Connection-/Availability-Updates und ein beim Reconnect wiederholter retained-Wert dürfen keinen neuen Messpunkt „jetzt“ erzeugen. Eine lückenlose Historie seit Gerätestart wird nicht aus Discovery versprochen. Ein späterer Historienadapter muss Zeiträume, maximale Punktzahl, Aggregation und Zugriffsrechte begrenzen.
+
+## Laufzeitmodul und MQTT-Brücke
+
+Das SDK enthält die neutrale Logik hinter dem Vertrag. Sie braucht keine Laufzeitpakete und läuft ohne DOM.
+
+```ts
+import { parseSensorCatalog, scanDiscovery, previewImport, applyImport, SensorConnector, planSubscriptions } from '@fabriqon/sdk/sensors';
+```
+
+| Funktion | Aufgabe |
+| --- | --- |
+| `parseSensorCatalog`, `parseSensorBindings`, `parseSensorState` | Strikte Prüfung wie die JSON-Schemas, dazu Referenz-, Identitäts- und Transportregeln. Wirft bei ungültiger Eingabe nicht, sondern liefert `{ ok: false, error }`. Zugangsdaten und auffällige Schlüssel in Links werden zurückgewiesen. |
+| `parseStrictJson` | JSON mit Größenlimit, ohne doppelte Schlüssel und ohne `__proto__`. |
+| `scanDiscovery`, `previewImport`, `applyImport` | Home-Assistant-Discovery zu Kandidaten, Vorschau gegen den Katalog, ausdrückliche Übernahme. Reine Abwesenheit löscht nichts. Nicht unterstützte Templates werden gemeldet und nicht geraten. |
+| `decodeReading`, `evaluateRuntime` | Rohwert dekodieren, Verbindung, Verfügbarkeit und Frische bewerten. Gründe sind stabile Codes (`no-reading`, `expired`, `denied` und weitere); die Anzeigesprache bestimmt die Anwendung. |
+| `planSubscriptions`, `isTopicAllowed`, `SensorConnector` | Nur exakte Topics innerhalb vom Betreiber freigegebener Präfixe. Der Connector erzeugt Zustandsdokumente mit Stream-ID und Sequenz. Nach einer Wiederverbindung beginnt ein neuer Stream. |
+
+Die MQTT-Brücke liegt in einem eigenen Einstiegspunkt, weil sie Zeitgeber braucht. Das SDK hängt nicht von einer MQTT-Bibliothek ab. Der Aufrufer übergibt eine Funktion, die den Client erzeugt, zum Beispiel mit mqtt.js:
+
+```ts
+import mqtt from 'mqtt';
+import { MqttSourceLink, attachConnector } from '@fabriqon/sdk/sensors/mqtt';
+
+const link = new MqttSourceLink(
+  { id: 'mqtt-home', allowedTopicPrefixes: ['lab'], discoveryPrefix: 'homeassistant' },
+  () => mqtt.connect('mqtts://broker.example.test:8883', { username: 'reader', password: process.env.MQTT_PASSWORD, resubscribe: false }),
+);
+const { detach } = attachConnector(link, catalog, (states) => states.forEach(publishToViewers));
+```
+
+Eigenschaften der Brücke:
+
+- Nur lesend. Es gibt keine Funktion zum Veröffentlichen.
+- Abonniert nur exakte Topics der freigegebenen Präfixe, nie Wildcards. Die einzige Ausnahme ist `scanDiscovery` mit den zwei Discovery-Mustern unter dem Präfix. Nur Administratoren sollten sie auslösen.
+- Verwirft Nachrichten über 64 KiB und über dem Ratenlimit (Standard 100 pro Sekunde).
+- Erkennt verweigerte Abonnements im SUBACK (Code ab 128). Mosquitto nimmt gesperrte Abonnements mit `acl_file` still an. Fehlende Nachrichten sind deshalb kein Beleg für Zugriff.
+- Verbindet beim ersten Abonnement und trennt nach Leerlauf. Ein später hinzukommender Abnehmer bekommt die letzte Nachricht je Topic mit der ursprünglichen Empfangszeit (der Broker liefert retained nur beim echten Abonnieren).
+- Fehler erscheinen nur als kurzer Code, nie mit Adresse oder Zugangsdaten.
+
+Nicht Teil des SDK: Betreiberkonfiguration und Geheimnisse, Persistenz von Katalog und Bindungen, Historie, Mehrinstanz-Betrieb und die Auslieferung an Browser. Das bleibt Aufgabe der Anwendung. Getestet ist die Brücke mit einem simulierten Client. Ein Test gegen einen echten Broker liegt in der Anwendung, die das SDK nutzt.
 
 ## Geplante Adaptergrenze
 

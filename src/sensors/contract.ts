@@ -302,6 +302,13 @@ function stateShape(value: unknown): SensorState {
   };
 }
 
+/**
+ * ID der vom Betreiber freigegebenen Quelle (Verbindung), über die eine Katalogquelle läuft. Bei `aas-interfaces`
+ * heißt die Katalogquelle `aas.<Betreiberquelle>`, damit dieselbe Verbindung neben einer Discovery-Quelle im selben Katalog
+ * stehen kann (Quellen-IDs sind im Katalog eindeutig). Alle anderen Quellen nutzen ihre eigene ID.
+ */
+export const operatorSourceId = (source: Pick<SensorSource, 'id' | 'kind'>): string => (source.kind === 'aas-interfaces' ? source.id.slice('aas.'.length) : source.id);
+
 const duplicates = (values: string[]) => new Set(values).size !== values.length;
 export const deviceAliasKey = (sourceId: string, a: DeviceAlias) => JSON.stringify([sourceId, a.kind, a.kind === 'connection' ? a.type : null, a.value]);
 export const signalIdentityKey = (s: Pick<SensorSignal, 'sourceId' | 'identity'>) => JSON.stringify([s.sourceId, s.identity.component, s.identity.kind, s.identity.value]);
@@ -309,6 +316,7 @@ export const signalIdentityKey = (s: Pick<SensorSignal, 'sourceId' | 'identity'>
 /** Reference, identity and transport rules that a schema alone does not express. */
 function checkCatalog(catalog: SensorCatalog): string | null {
   if (duplicates(catalog.sources.map((s) => s.id))) return 'Duplicate source ID';
+  for (const s of catalog.sources) if (s.kind === 'aas-interfaces' && !/^aas\.[A-Za-z0-9][A-Za-z0-9._-]{0,123}$/.test(s.id)) return `Source ${s.id}: an aas-interfaces source ID must be "aas." followed by the operator source ID`;
   if (duplicates(catalog.devices.map((d) => d.id))) return 'Duplicate device ID';
   if (duplicates(catalog.signals.map((s) => s.id))) return 'Duplicate signal ID';
   const sources = new Map(catalog.sources.map((s) => [s.id, s]));

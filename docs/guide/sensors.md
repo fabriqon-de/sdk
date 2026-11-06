@@ -32,7 +32,7 @@ Ein Katalog hat `catalogId`, `revision`, `generatedAt`, `sources`, `devices` und
 | Feld | Bedeutung |
 | --- | --- |
 | source.id | Dauerhafte lokale Kennung einer Instanz, unabhängig von Adresse oder Anzeigename. |
-| source.kind | `mqtt-discovery`, `aas-interfaces`, `home-assistant`, `csv` oder `json`. Adapter für `home-assistant`, `csv` und `json` sind hier nicht implementiert. `aas-interfaces` beschreibt MQTT-Signale aus der Asset Interfaces Description (IDTA 02017) einer Verwaltungsschale. |
+| source.kind | `mqtt-discovery`, `aas-interfaces`, `home-assistant`, `csv` oder `json`. Adapter für `home-assistant`, `csv` und `json` sind hier nicht implementiert. `aas-interfaces` beschreibt MQTT-Signale aus der Asset Interfaces Description (IDTA 02017) einer Verwaltungsschale; die Quellen-ID heißt `aas.<Betreiberquelle>`, damit dieselbe Verbindung neben einer Discovery-Quelle im Katalog stehen kann (`operatorSourceId`). |
 | device.externalIds | Typisierte Gerätealiaswerte (identifier oder connection mit Typ) innerhalb dieser Quelle. Keine Zusammenführung nur anhand eines Namens. |
 | signal.id | Lokale, dauerhafte Messgrößen-ID. Eine Temperatur- und eine Feuchtemessung sind zwei Signale desselben Geräts. |
 | signal.identity | Quellkennung als Tupel aus `sourceId`, `component`, Identitätsart und Wert. Namen und sichtbare MQTT-Topics sind keine Ersatz-IDs. |

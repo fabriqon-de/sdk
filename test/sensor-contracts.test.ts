@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
+import { operatorSourceId } from '../src/sensors/contract.js';
 // @ts-expect-error Development-only JSON Schema checker has no public TypeScript API.
 import { validateDocument, validateCatalog, validateBindings, validateState } from '../scripts/validate-sensor-contracts.mjs';
 const fixture=(name:string)=>JSON.parse(readFileSync(new URL(`../examples/sensors/${name}.json`,import.meta.url),'utf8'));
@@ -56,22 +57,26 @@ describe('sensor import contract conformance',()=>{
  });
  it('accepts interface signals from a Verwaltungsschale without a discovery configuration',()=>{
   const aas=structuredClone(catalog);
-  aas.sources.push({id:'shell',kind:'aas-interfaces',name:'Verwaltungsschale'});
-  aas.signals.push({id:'sig-shell-temp',sourceId:'shell',identity:{kind:'external-id',component:'sensor',value:'https://hersteller.example/asset/1#MQTT/temperature'},name:'temperature',dataType:'number',unit:'CEL',lifecycle:'active',mqtt:{stateTopic:'lab/plc/temp',selector:{kind:'text'}}});
+  aas.sources.push({id:'aas.shell',kind:'aas-interfaces',name:'Verwaltungsschale'});
+  aas.signals.push({id:'sig-shell-temp',sourceId:'aas.shell',identity:{kind:'external-id',component:'sensor',value:'https://hersteller.example/asset/1#MQTT/temperature'},name:'temperature',dataType:'number',unit:'CEL',lifecycle:'active',mqtt:{stateTopic:'lab/plc/temp',selector:{kind:'text'}}});
   expect(validateCatalog(aas).signals.at(-1).mqtt.discoveryTopic).toBeUndefined();
+  expect(operatorSourceId({id:'aas.broker-1',kind:'aas-interfaces'})).toBe('broker-1');
+  expect(operatorSourceId({id:'broker-1',kind:'mqtt-discovery'})).toBe('broker-1');
  });
  it('keeps the discovery rules strict for discovery sources and strict about interface signals',()=>{
   const missing=structuredClone(catalog);delete missing.signals[0].mqtt.discoveryTopic;
   expect(()=>validateCatalog(missing)).toThrow(/Discovery topic missing/);
   const base=structuredClone(catalog);
-  base.sources.push({id:'shell',kind:'aas-interfaces',name:'Verwaltungsschale'});
-  const signal={id:'sig-shell-temp',sourceId:'shell',identity:{kind:'external-id',component:'sensor',value:'urn:x#MQTT/t'},name:'t',dataType:'number',lifecycle:'active',mqtt:{stateTopic:'lab/plc/temp',selector:{kind:'text'}}};
+  base.sources.push({id:'aas.shell',kind:'aas-interfaces',name:'Verwaltungsschale'});
+  const signal={id:'sig-shell-temp',sourceId:'aas.shell',identity:{kind:'external-id',component:'sensor',value:'urn:x#MQTT/t'},name:'t',dataType:'number',lifecycle:'active',mqtt:{stateTopic:'lab/plc/temp',selector:{kind:'text'}}};
   const withDiscovery=structuredClone(base);withDiscovery.signals.push({...signal,mqtt:{...signal.mqtt,discoveryTopic:'homeassistant/sensor/a/b/config'}});
   expect(()=>validateCatalog(withDiscovery)).toThrow(/no discovery configuration/i);
   const wrongIdentity=structuredClone(base);wrongIdentity.signals.push({...signal,identity:{kind:'unique-id',component:'sensor',value:'x'}});
   expect(()=>validateCatalog(wrongIdentity)).toThrow(/external-id/i);
   const noMqtt=structuredClone(base);const {mqtt:_m,...bare}=signal;void _m;noMqtt.signals.push(bare);
   expect(()=>validateCatalog(noMqtt)).toThrow(/MQTT binding/);
+  const wrongId=structuredClone(base);wrongId.sources.at(-1).id='shell';wrongId.signals.push({...signal,sourceId:'shell'});
+  expect(()=>validateCatalog(wrongId)).toThrow(/aas\./);
   const wildcard=structuredClone(base);wildcard.signals.push({...signal,mqtt:{stateTopic:'lab/#',selector:{kind:'text'}}});
   expect(()=>validateCatalog(wildcard)).toThrow();
   const binary=structuredClone(base);binary.signals.push({...signal,identity:{kind:'external-id',component:'binary_sensor',value:'urn:x#MQTT/b'},dataType:'boolean'});

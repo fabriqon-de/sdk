@@ -22,6 +22,7 @@ export function validateCatalog(value){
   for(const id of device.externalIds)deviceAliases.push(JSON.stringify([device.sourceId,id.kind,id.type??null,id.value]));
  }
  unique(deviceAliases,'device alias');
+ for(const s of catalog.sources)if(s.kind==='aas-interfaces')requireValue(/^aas\.[A-Za-z0-9][A-Za-z0-9._-]{0,123}$/.test(s.id),'aas-interfaces source ID must be aas.<operator source>');
  const identities=[];
  for(const signal of catalog.signals){
   const source=sources.get(signal.sourceId);requireValue(source,'Unknown signal source');

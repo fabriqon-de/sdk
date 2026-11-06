@@ -11,7 +11,7 @@ Notable changes are recorded here. This project is still an unpublished developm
 - Optional Three.js viewer with procedural assets, selection, camera controls, custom geometry hooks, resource cleanup and an optional frame budget.
 - MIT license and VitePress documentation for docs.fabriqon.de.
 - Asset Administration Shell module (`@fabriqon/sdk/aas`, metamodel V3 JSON): bounded parser, Digital Nameplate (IDTA 02006-3-0) builder and reader, one-level bill of material (IDTA 02011-1-1), Asset Interfaces Description reader (IDTA 02017) and credential stripping. No runtime dependencies; output is checked against aas-core3.0-typescript in tests.
-- Sensor contract v1 gains the source kind `aas-interfaces` (additive): MQTT signals taken from an Asset Interfaces Description. `mqtt.discoveryTopic` becomes optional in the schema and parser; it stays required for `mqtt-discovery` sources and is rejected for `aas-interfaces` sources. Existing catalogs remain valid.
+- Sensor contract v1 gains the source kind `aas-interfaces` (additive): MQTT signals taken from an Asset Interfaces Description. `mqtt.discoveryTopic` becomes optional in the schema and parser; it stays required for `mqtt-discovery` sources and is rejected for `aas-interfaces` sources. Their source ID is `aas.<operator source>` (`operatorSourceId`). Existing catalogs remain valid.
 
 ### Proposals on this development branch
 

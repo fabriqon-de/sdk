@@ -29,6 +29,9 @@ try {
     assert.throws(() => parseSceneModel(null), ModelValidationError);
     const text = [0,'SECTION',2,'ENTITIES',0,'LINE',8,'WALLS',10,0,20,0,11,2,21,0,0,'ENDSEC',0,'EOF'].join('\\n')+'\\n';
     assert.equal(importDxf(text,{unit:'m'}).plan.walls.length,1);
+    const aas = await import('@fabriqon/sdk/aas');
+    const plate = aas.buildNameplate('urn:x:sm', { manufacturerName: 'X' }).submodel;
+    assert.equal(aas.parseAasEnvironment({ submodels: [plate] }).submodels[0].idShort, 'Nameplate');
     const sensors = await import('@fabriqon/sdk/sensors');
     const catalog = JSON.parse(readFileSync(new URL(import.meta.resolve('@fabriqon/sdk/contracts/sensor-catalog.v1.schema.json')).pathname.replace(/contracts.*$/, 'examples/sensors/catalog.json'), 'utf8'));
     assert.equal(sensors.parseSensorCatalog(catalog).ok, true);
@@ -38,7 +41,7 @@ try {
     assert.equal(typeof MqttSourceLink, 'function');
     for(const name of ['three','zod','react','next','ajv','ajv-formats']) assert.throws(() => import.meta.resolve(name), /Cannot find package/);
     assert.equal(typeof document,'undefined');
-    console.log('Packed Core, DXF and sensor contract files work with no external runtime packages.');
+    console.log('Packed Core, AAS, DXF and sensor contract files work with no external runtime packages.');
   `);
   execFileSync(process.execPath, [path.join(consumer, 'verify.mjs')], { cwd: consumer, stdio: 'inherit' });
 } finally { rmSync(temporary, { recursive: true, force: true }); }

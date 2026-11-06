@@ -10,6 +10,7 @@ Notable changes are recorded here. This project is still an unpublished developm
 - Prepared ASCII DXF import for straight walls and closed room contours.
 - Optional Three.js viewer with procedural assets, selection, camera controls, custom geometry hooks, resource cleanup and an optional frame budget.
 - MIT license and VitePress documentation for docs.fabriqon.de.
+- Asset Administration Shell module (`@fabriqon/sdk/aas`, metamodel V3 JSON): bounded parser, Digital Nameplate (IDTA 02006-3-0) builder and reader, one-level bill of material (IDTA 02011-1-1), Asset Interfaces Description reader (IDTA 02017) and credential stripping. No runtime dependencies; output is checked against aas-core3.0-typescript in tests.
 
 ### Proposals on this development branch
 

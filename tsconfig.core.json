@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "lib": ["ES2022"], "noEmit": true },
-  "include": ["src/model.ts", "src/drawing.ts", "src/sensors/index.ts"]
+  "include": ["src/model.ts", "src/drawing.ts", "src/sensors/index.ts", "src/aas.ts"]
 }

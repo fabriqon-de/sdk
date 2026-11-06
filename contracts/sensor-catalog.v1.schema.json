@@ -40,6 +40,7 @@
             "enum": [
               "mqtt-discovery",
               "aas-interfaces",
+              "opcua",
               "home-assistant",
               "csv",
               "json"
@@ -407,6 +408,31 @@
             "required": [
               "stateTopic",
               "selector"
+            ]
+          },
+          "opcua": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512,
+                "pattern": "^(?:ns=\\d{1,5};|nsu=[^;\\u0000-\\u001f\\u007f]{1,256};)?(?:i=\\d{1,10}|s=[^\\u0000-\\u001f\\u007f]{1,400}|g=[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}|b=[A-Za-z0-9+/]{1,400}={0,2})$"
+              },
+              "samplingIntervalMs": {
+                "type": "integer",
+                "minimum": 50,
+                "maximum": 3600000
+              },
+              "deadband": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1000000000000.0
+              }
+            },
+            "required": [
+              "nodeId"
             ]
           }
         },

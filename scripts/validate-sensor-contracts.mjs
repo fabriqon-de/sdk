@@ -29,6 +29,14 @@ export function validateCatalog(value){
   identities.push(JSON.stringify([signal.sourceId,signal.identity.component,signal.identity.kind,signal.identity.value]));
   if(signal.deviceId)requireValue(devices.get(signal.deviceId)?.sourceId===signal.sourceId,'Device belongs to another or unknown source');
   requireValue((source.kind==='mqtt-discovery'||source.kind==='aas-interfaces')===!!signal.mqtt,'MQTT binding/source mismatch');
+  requireValue((source.kind==='opcua')===!!signal.opcua,'OPC UA binding/source mismatch');
+  if(signal.opcua){
+   requireValue(signal.identity.kind==='external-id','OPC UA signal needs an external-id identity');
+   requireValue(signal.identity.value===signal.opcua.nodeId,'OPC UA signal identity is its NodeId');
+   requireValue((signal.identity.component==='binary_sensor')===(signal.dataType==='boolean'),'Component/value type mismatch');
+   if(signal.opcua.deadband!==undefined)requireValue(signal.dataType==='number','Deadband is only allowed for numbers');
+   continue;
+  }
   if(!signal.mqtt)continue;
   const mqtt=signal.mqtt;
   if(source.kind==='aas-interfaces'){

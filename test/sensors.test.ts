@@ -48,6 +48,38 @@ describe('contract validation agrees with the JSON Schema checker', () => {
     expect(parseSensorCatalog(value).ok).toBe(false);
   });
 
+  const opcuaCatalog = (over: Record<string, unknown> = {}, opcua: Record<string, unknown> = {}): SensorCatalog => {
+    const c = clone(catalog);
+    c.sources.push({ id: 'plc-1', kind: 'opcua', name: 'Steuerung 1' } as SensorCatalog['sources'][number]);
+    c.signals.push({
+      id: 'sig-plc-a', sourceId: 'plc-1', identity: { kind: 'external-id', component: 'sensor', value: 'ns=2;s=A' }, name: 'A', dataType: 'number', lifecycle: 'active',
+      opcua: { nodeId: 'ns=2;s=A', samplingIntervalMs: 500, deadband: 0.5, ...opcua }, ...over,
+    } as unknown as SensorCatalog['signals'][number]);
+    return c;
+  };
+
+  it('OPC UA signals: schema checker and parser agree on valid and invalid catalogs', () => {
+    const valid = [opcuaCatalog(), opcuaCatalog({}, { samplingIntervalMs: undefined, deadband: undefined }), opcuaCatalog({ identity: { kind: 'external-id', component: 'sensor', value: 'i=2258' } }, { nodeId: 'i=2258' }),
+      opcuaCatalog({ identity: { kind: 'external-id', component: 'sensor', value: 'nsu=urn:werk:plc;s=Temp' } }, { nodeId: 'nsu=urn:werk:plc;s=Temp' })];
+    for (const c of valid) {
+      expect(() => validateCatalog(c)).not.toThrow();
+      expect(parseSensorCatalog(c)).toMatchObject({ ok: true });
+    }
+    const invalid: SensorCatalog[] = [
+      opcuaCatalog({}, { nodeId: 'Temperatur' }), opcuaCatalog({}, { nodeId: 'ns=2;s=' }), opcuaCatalog({}, { samplingIntervalMs: 10 }), opcuaCatalog({}, { deadband: -1 }),
+      opcuaCatalog({}, { endpointUrl: 'opc.tcp://x' }), opcuaCatalog({}, { password: 'x' }),
+      opcuaCatalog({ identity: { kind: 'external-id', component: 'sensor', value: 'ns=2;s=B' } }), opcuaCatalog({ identity: { kind: 'unique-id', component: 'sensor', value: 'ns=2;s=A' } }),
+      opcuaCatalog({ dataType: 'string' }), opcuaCatalog({ mqtt: { stateTopic: 'lab/x', selector: { kind: 'text' } } }),
+      opcuaCatalog({ identity: { kind: 'external-id', component: 'binary_sensor', value: 'ns=2;s=A' } }),
+    ];
+    for (const c of invalid) {
+      let schemaOk = true;
+      try { validateCatalog(c); } catch { schemaOk = false; }
+      expect(schemaOk).toBe(false);
+      expect(parseSensorCatalog(c).ok).toBe(false);
+    }
+  });
+
   it('is stricter than the schema for credential-like URL keys', () => {
     for (const url of ['https://example.test/x?token=abc', 'https://example.test/x#api_key=1', 'https://example.test/x?a=1&password=2']) {
       const value = clone(catalog);

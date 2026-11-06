@@ -16,8 +16,10 @@ export const MAX_DISCOVERY_BYTES = 256 * 1024;
 /**
  * `aas-interfaces`: MQTT-Signale, die aus der Asset Interfaces Description (IDTA 02017) einer Verwaltungsschale
  * stammen. Sie haben keine Discovery-Konfiguration; Identität ist `external-id`.
+ * Quellen `opcua` (additiv, v1.2): lesende OPC-UA-Knoten. Signale tragen `opcua` statt `mqtt`, die Identität ist `external-id`
+ * mit der NodeId als Wert. Adresse, Sicherheit und Zugangsdaten gehören nie in den Katalog (Betreiberkonfiguration).
  */
-export type SensorSourceKind = 'mqtt-discovery' | 'aas-interfaces' | 'home-assistant' | 'csv' | 'json';
+export type SensorSourceKind = 'mqtt-discovery' | 'aas-interfaces' | 'opcua' | 'home-assistant' | 'csv' | 'json';
 export type SensorDataType = 'number' | 'boolean' | 'string';
 export type SensorStateClass = 'measurement' | 'total' | 'total_increasing';
 
@@ -35,11 +37,13 @@ export interface SensorMqtt {
   discoveryTopic?: string; componentKey?: string; stateTopic: string; selector: Selector;
   booleanPayloads?: { on: string; off: string }; availability?: SensorAvailability; expireAfterSeconds?: number;
 }
+/** Lesender OPC-UA-Knoten (Quelle `opcua`). `nodeId` in der Textform, zum Beispiel `ns=2;s=Temperatur` oder `i=2258`. */
+export interface SensorOpcua { nodeId: string; samplingIntervalMs?: number; deadband?: number }
 export interface SensorSignal {
   id: string; sourceId: string; deviceId?: string;
   identity: { kind: 'unique-id' | 'discovery-topic' | 'entity-id' | 'external-id'; component: 'sensor' | 'binary_sensor'; value: string };
   name: string; dataType: SensorDataType; unit?: string; deviceClass?: string; stateClass?: SensorStateClass;
-  lifecycle: 'active' | 'removed'; staleAfterSeconds?: number; mqtt?: SensorMqtt;
+  lifecycle: 'active' | 'removed'; staleAfterSeconds?: number; mqtt?: SensorMqtt; opcua?: SensorOpcua;
 }
 export interface SensorCatalog {
   schemaVersion: 1; kind: 'fabriqon.sensor-catalog'; catalogId: string; revision: number; generatedAt: string;
@@ -160,7 +164,7 @@ const pointer = (v: unknown, p: string) => {
 
 function source(value: unknown, path: string): SensorSource {
   const r = strict(value, path, ['id', 'kind', 'name'], ['discoveryPrefix']);
-  const out: SensorSource = { id: docId(r.id, `${path}.id`), kind: oneOf(r.kind, `${path}.kind`, ['mqtt-discovery', 'aas-interfaces', 'home-assistant', 'csv', 'json']), name: text(r.name, `${path}.name`, 200) };
+  const out: SensorSource = { id: docId(r.id, `${path}.id`), kind: oneOf(r.kind, `${path}.kind`, ['mqtt-discovery', 'aas-interfaces', 'opcua', 'home-assistant', 'csv', 'json']), name: text(r.name, `${path}.name`, 200) };
   if (r.discoveryPrefix !== undefined) out.discoveryPrefix = text(r.discoveryPrefix, `${path}.discoveryPrefix`, 128);
   return out;
 }
@@ -216,8 +220,21 @@ function mqtt(value: unknown, path: string): SensorMqtt {
   if (r.expireAfterSeconds !== undefined) out.expireAfterSeconds = seconds(r.expireAfterSeconds, `${path}.expireAfterSeconds`);
   return out;
 }
+/** Textform einer NodeId: optional Namensraum (`ns=<Index>;` oder `nsu=<URI>;`), dann `i=`, `s=`, `g=` oder `b=`. */
+const NODE_ID = /^(?:ns=\d{1,5};|nsu=[^;\u0000-\u001f\u007f]{1,256};)?(?:i=\d{1,10}|s=[^\u0000-\u001f\u007f]{1,400}|g=[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}|b=[A-Za-z0-9+/]{1,400}={0,2})$/;
+export const isNodeId = (value: unknown): value is string => typeof value === 'string' && value.length <= 512 && NODE_ID.test(value);
+function opcua(value: unknown, path: string): SensorOpcua {
+  const r = strict(value, path, ['nodeId'], ['samplingIntervalMs', 'deadband']);
+  const out: SensorOpcua = { nodeId: matching(r.nodeId, `${path}.nodeId`, NODE_ID, 'Invalid OPC UA NodeId (text form such as ns=2;s=Name or i=2258)') };
+  if (r.samplingIntervalMs !== undefined) out.samplingIntervalMs = integer(r.samplingIntervalMs, `${path}.samplingIntervalMs`, 50, 3_600_000);
+  if (r.deadband !== undefined) {
+    if (typeof r.deadband !== 'number' || !Number.isFinite(r.deadband) || r.deadband < 0 || r.deadband > 1e12) fail(`${path}.deadband`, 'Expected a finite number from 0 to 1e12');
+    out.deadband = r.deadband as number;
+  }
+  return out;
+}
 function signal(value: unknown, path: string): SensorSignal {
-  const r = strict(value, path, ['id', 'sourceId', 'identity', 'name', 'dataType', 'lifecycle'], ['deviceId', 'unit', 'deviceClass', 'stateClass', 'staleAfterSeconds', 'mqtt']);
+  const r = strict(value, path, ['id', 'sourceId', 'identity', 'name', 'dataType', 'lifecycle'], ['deviceId', 'unit', 'deviceClass', 'stateClass', 'staleAfterSeconds', 'mqtt', 'opcua']);
   const i = strict(r.identity, `${path}.identity`, ['kind', 'component', 'value']);
   const out: SensorSignal = {
     id: docId(r.id, `${path}.id`), sourceId: docId(r.sourceId, `${path}.sourceId`),
@@ -234,6 +251,7 @@ function signal(value: unknown, path: string): SensorSignal {
   if (r.stateClass !== undefined) out.stateClass = oneOf(r.stateClass, `${path}.stateClass`, ['measurement', 'total', 'total_increasing']);
   if (r.staleAfterSeconds !== undefined) out.staleAfterSeconds = seconds(r.staleAfterSeconds, `${path}.staleAfterSeconds`);
   if (r.mqtt !== undefined) out.mqtt = mqtt(r.mqtt, `${path}.mqtt`);
+  if (r.opcua !== undefined) out.opcua = opcua(r.opcua, `${path}.opcua`);
   if (out.dataType !== 'number' && (out.unit !== undefined || out.stateClass !== undefined)) fail(path, 'Unit and stateClass are only allowed for numbers');
   return out;
 }
@@ -335,6 +353,14 @@ function checkCatalog(catalog: SensorCatalog): string | null {
     if (s.deviceId && devices.get(s.deviceId)?.sourceId !== s.sourceId) return `Signal ${s.id}: device belongs to another or unknown source`;
     const mqttSource = src.kind === 'mqtt-discovery' || src.kind === 'aas-interfaces';
     if (mqttSource !== !!s.mqtt) return `Signal ${s.id}: MQTT binding does not match the source`;
+    if ((src.kind === 'opcua') !== !!s.opcua) return `Signal ${s.id}: OPC UA binding does not match the source`;
+    if (s.opcua) {
+      if (s.identity.kind !== 'external-id') return `Signal ${s.id}: an OPC UA signal needs an external-id identity`;
+      if (s.identity.value !== s.opcua.nodeId) return `Signal ${s.id}: the identity of an OPC UA signal is its NodeId`;
+      if ((s.identity.component === 'binary_sensor') !== (s.dataType === 'boolean')) return `Signal ${s.id}: component and value type do not match`;
+      if (s.opcua.deadband !== undefined && s.dataType !== 'number') return `Signal ${s.id}: a deadband is only allowed for numbers`;
+      continue;
+    }
     const m = s.mqtt;
     if (!m) continue;
     if (src.kind === 'aas-interfaces') {

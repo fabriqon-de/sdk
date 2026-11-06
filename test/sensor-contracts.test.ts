@@ -82,4 +82,34 @@ describe('sensor import contract conformance',()=>{
   const binary=structuredClone(base);binary.signals.push({...signal,identity:{kind:'external-id',component:'binary_sensor',value:'urn:x#MQTT/b'},dataType:'boolean'});
   expect(()=>validateCatalog(binary)).toThrow(/Binary payload/);
  });
+ it('accepts read-only OPC UA signals and keeps them apart from MQTT',()=>{
+  const base=structuredClone(catalog);
+  base.sources.push({id:'plc-1',kind:'opcua',name:'Steuerung 1'});
+  const signal={id:'sig-plc-temp',sourceId:'plc-1',identity:{kind:'external-id',component:'sensor',value:'ns=2;s=Kessel.Temperatur'},name:'Temperatur',dataType:'number',unit:'CEL',lifecycle:'active',opcua:{nodeId:'ns=2;s=Kessel.Temperatur',samplingIntervalMs:1000,deadband:0.1}};
+  const ok=structuredClone(base);ok.signals.push(signal);
+  expect(validateCatalog(ok).signals.at(-1).opcua.nodeId).toBe('ns=2;s=Kessel.Temperatur');
+  expect(operatorSourceId({id:'plc-1',kind:'opcua'})).toBe('plc-1');
+  const withMqtt=structuredClone(base);withMqtt.signals.push({...signal,mqtt:{stateTopic:'lab/x',selector:{kind:'text'}}});
+  expect(()=>validateCatalog(withMqtt)).toThrow(/MQTT binding/);
+  const onMqttSource=structuredClone(base);onMqttSource.signals.push({...signal,sourceId:catalog.sources[0].id});
+  expect(()=>validateCatalog(onMqttSource)).toThrow();
+  const noOpcua=structuredClone(base);const {opcua:_o,...bare}=signal;void _o;noOpcua.signals.push(bare);
+  expect(()=>validateCatalog(noOpcua)).toThrow(/OPC UA binding/);
+ });
+ it('rejects malformed NodeIds, wrong identities, unsuitable deadbands and unknown OPC UA fields',()=>{
+  const base=structuredClone(catalog);base.sources.push({id:'plc-1',kind:'opcua',name:'Steuerung 1'});
+  const signal={id:'sig-plc-temp',sourceId:'plc-1',identity:{kind:'external-id',component:'sensor',value:'ns=2;s=A'},name:'A',dataType:'number',lifecycle:'active',opcua:{nodeId:'ns=2;s=A'}};
+  const make=(over:object)=>{const c=structuredClone(base);c.signals.push({...signal,...over});return c;};
+  for(const nodeId of ['','Temperatur','ns=2','ns=x;s=A','ns=2;x=A','s=','i=abc','ns=2;s=a\nb','ns=123456;s=A']){
+   expect(()=>validateCatalog(make({opcua:{nodeId},identity:{...signal.identity,value:nodeId||'x'}})),nodeId).toThrow();
+  }
+  expect(()=>validateCatalog(make({identity:{kind:'external-id',component:'sensor',value:'ns=2;s=B'}}))).toThrow(/NodeId/);
+  expect(()=>validateCatalog(make({identity:{kind:'unique-id',component:'sensor',value:'ns=2;s=A'}}))).toThrow(/external-id/);
+  expect(()=>validateCatalog(make({dataType:'string',opcua:{nodeId:'ns=2;s=A',deadband:1}}))).toThrow(/Deadband|deadband/i);
+  expect(()=>validateCatalog(make({opcua:{nodeId:'ns=2;s=A',samplingIntervalMs:10}}))).toThrow();
+  expect(()=>validateCatalog(make({opcua:{nodeId:'ns=2;s=A',deadband:-1}}))).toThrow();
+  expect(()=>validateCatalog(make({opcua:{nodeId:'ns=2;s=A',endpointUrl:'opc.tcp://x'}}))).toThrow();
+  expect(()=>validateCatalog(make({opcua:{nodeId:'ns=2;s=A',password:'x'}}))).toThrow();
+  expect(()=>validateCatalog(make({identity:{kind:'external-id',component:'binary_sensor',value:'ns=2;s=A'}}))).toThrow(/Component|type/);
+ });
 });

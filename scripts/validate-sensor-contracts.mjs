@@ -27,17 +27,24 @@ export function validateCatalog(value){
   const source=sources.get(signal.sourceId);requireValue(source,'Unknown signal source');
   identities.push(JSON.stringify([signal.sourceId,signal.identity.component,signal.identity.kind,signal.identity.value]));
   if(signal.deviceId)requireValue(devices.get(signal.deviceId)?.sourceId===signal.sourceId,'Device belongs to another or unknown source');
-  requireValue((source.kind==='mqtt-discovery')===!!signal.mqtt,'MQTT binding/source mismatch');
+  requireValue((source.kind==='mqtt-discovery'||source.kind==='aas-interfaces')===!!signal.mqtt,'MQTT binding/source mismatch');
   if(!signal.mqtt)continue;
-  requireValue(['unique-id','discovery-topic'].includes(signal.identity.kind),'Invalid MQTT identity kind');
-  const mqtt=signal.mqtt,prefix=source.discoveryPrefix;
-  requireValue(prefix && !/[+#\u0000-\u001f]/.test(prefix) && !prefix.endsWith('/'),'Missing or invalid discovery prefix');
-  requireValue(mqtt.discoveryTopic.startsWith(prefix+'/'),'Discovery topic outside prefix');
-  const parts=mqtt.discoveryTopic.slice(prefix.length+1).split('/');
-  requireValue([3,4].includes(parts.length)&&parts.at(-1)==='config'&&parts.every(Boolean),'Invalid discovery locator');
-  if(parts[0]==='device')requireValue(!!mqtt.componentKey,'Device discovery needs componentKey');
-  else requireValue(parts[0]===signal.identity.component&&!mqtt.componentKey,'Component discovery mismatch');
-  if(signal.identity.kind==='discovery-topic')requireValue(signal.identity.value===JSON.stringify([mqtt.discoveryTopic,mqtt.componentKey??null]),'Noncanonical fallback identity');
+  const mqtt=signal.mqtt;
+  if(source.kind==='aas-interfaces'){
+   requireValue(mqtt.discoveryTopic===undefined&&mqtt.componentKey===undefined,'Interface signal has no discovery configuration');
+   requireValue(signal.identity.kind==='external-id','Interface signal needs an external-id identity');
+  }else{
+   requireValue(['unique-id','discovery-topic'].includes(signal.identity.kind),'Invalid MQTT identity kind');
+   const prefix=source.discoveryPrefix;
+   requireValue(prefix && !/[+#\u0000-\u001f]/.test(prefix) && !prefix.endsWith('/'),'Missing or invalid discovery prefix');
+   requireValue(mqtt.discoveryTopic!==undefined,'Discovery topic missing');
+   requireValue(mqtt.discoveryTopic.startsWith(prefix+'/'),'Discovery topic outside prefix');
+   const parts=mqtt.discoveryTopic.slice(prefix.length+1).split('/');
+   requireValue([3,4].includes(parts.length)&&parts.at(-1)==='config'&&parts.every(Boolean),'Invalid discovery locator');
+   if(parts[0]==='device')requireValue(!!mqtt.componentKey,'Device discovery needs componentKey');
+   else requireValue(parts[0]===signal.identity.component&&!mqtt.componentKey,'Component discovery mismatch');
+   if(signal.identity.kind==='discovery-topic')requireValue(signal.identity.value===JSON.stringify([mqtt.discoveryTopic,mqtt.componentKey??null]),'Noncanonical fallback identity');
+  }
   const binary=signal.identity.component==='binary_sensor';
   requireValue(binary===(signal.dataType==='boolean'),'Component/value type mismatch');
   requireValue(binary===!!mqtt.booleanPayloads,'Binary payload mapping missing or inappropriate');

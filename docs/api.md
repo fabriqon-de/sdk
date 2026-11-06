@@ -34,6 +34,23 @@ IDs sind innerhalb jeder Sammlung eindeutig. Verbindungen verbinden zwei verschi
 
 Mauern brauchen verschiedene Endpunkte sowie positive Höhe und Stärke. Raumflächen dürfen weder degeneriert noch selbstschneidend sein. Die Zeichnungseinheit ist immer `m`. Räume werden nicht automatisch zu Sicherheitszonen.
 
+## Verwaltungsschale (AAS)
+
+Der Entry Point `/aas` liest und schreibt Umgebungen nach dem AAS-Metamodell V3 (JSON-Serialisierung). Er hat keine externen Laufzeitpakete und greift nicht auf DOM zu.
+
+| Export | Rückgabe / Bedeutung |
+| --- | --- |
+| `parseAasEnvironment(value, limits?)` | Geprüfte, vom Eingang gelöste Kopie mit nur bekannten Feldern; wirft `ModelValidationError` |
+| `serializeAasEnvironment(env)` | Validiert und liefert formatiertes JSON |
+| `buildNameplate(id, data, language?)` | Digital Nameplate (IDTA 02006-3-0) und Liste fehlender Pflichtelemente (`missing`) |
+| `readNameplate(submodel, languages?)` | Typenschildwerte aus V3 sowie älteren V1/V2-Typenschildern |
+| `buildBillOfMaterial(id, entry, parts)` | Stückliste nach IDTA 02011-1-1, eine Ebene (`OneDown`) |
+| `readAssetInterfaces(submodel)` | Schnittstellen und Eigenschaften aus Asset Interfaces Description (IDTA 02017); Adressen ohne Zugangsdaten |
+| `stripEnvironmentCredentials(env)` | Kopie ohne `benutzer:passwort@` in URL-artigen Werten und Anzahl entfernter Angaben |
+| `submodelsOf(env, shell)`, `semanticIdOf(item)`, `toIdShort(text, used?)` | Hilfsfunktionen für Verweise, Semantik und gültige idShorts |
+
+Der Parser verwirft Erweiterungen, eingebettete Datenspezifikationen, Blob-Inhalte und Operationsvariablen. Grenzen (änderbar über `limits`): 50 000 Elemente, Tiefe 32, 20 000 Zeichen je Text, Kennungen bis 2000 Zeichen. IDs von Shells, Teilmodellen und Concept Descriptions sind eindeutig. Geschriebene idShorts folgen `[a-zA-Z][a-zA-Z0-9_]*`; gelesen wird auch der Bindestrich nach V3.1. Builder schreiben nur vorhandene Werte und erfinden keine Pflichtangaben. AASX-Pakete (ZIP) und XML liest der Core nicht; dafür ist eine anwendungsseitige Schicht vorgesehen.
+
 ## DXF-Import
 
 `importDxf(text, options)` aus dem Entry Point `/drawing` liefert `{ plan, warnings }`. Optionen sind `unit` (`m`, `cm`, `mm`), `name`, `height`, `thickness` und `center` (standardmäßig `true`). Die Textgrenze beträgt 5 MB.

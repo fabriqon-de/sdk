@@ -39,6 +39,7 @@
           "kind": {
             "enum": [
               "mqtt-discovery",
+              "aas-interfaces",
               "home-assistant",
               "csv",
               "json"
@@ -404,7 +405,6 @@
               }
             },
             "required": [
-              "discoveryTopic",
               "stateTopic",
               "selector"
             ]

@@ -13,7 +13,11 @@ export const MAX_BINDINGS = 10_000;
 export const MAX_CATALOG_BYTES = 5 * 1024 * 1024;
 export const MAX_DISCOVERY_BYTES = 256 * 1024;
 
-export type SensorSourceKind = 'mqtt-discovery' | 'home-assistant' | 'csv' | 'json';
+/**
+ * `aas-interfaces`: MQTT-Signale, die aus der Asset Interfaces Description (IDTA 02017) einer Verwaltungsschale
+ * stammen. Sie haben keine Discovery-Konfiguration; Identität ist `external-id`.
+ */
+export type SensorSourceKind = 'mqtt-discovery' | 'aas-interfaces' | 'home-assistant' | 'csv' | 'json';
 export type SensorDataType = 'number' | 'boolean' | 'string';
 export type SensorStateClass = 'measurement' | 'total' | 'total_increasing';
 
@@ -27,7 +31,8 @@ export type Selector = { kind: 'text' } | { kind: 'json-pointer'; pointer: strin
 export interface AvailabilityTopic { topic: string; online: string; offline: string }
 export interface SensorAvailability { mode: 'all' | 'any' | 'latest'; topics: AvailabilityTopic[] }
 export interface SensorMqtt {
-  discoveryTopic: string; componentKey?: string; stateTopic: string; selector: Selector;
+  /** Pflicht bei Quellen `mqtt-discovery`, bei `aas-interfaces` nicht erlaubt. */
+  discoveryTopic?: string; componentKey?: string; stateTopic: string; selector: Selector;
   booleanPayloads?: { on: string; off: string }; availability?: SensorAvailability; expireAfterSeconds?: number;
 }
 export interface SensorSignal {
@@ -155,7 +160,7 @@ const pointer = (v: unknown, p: string) => {
 
 function source(value: unknown, path: string): SensorSource {
   const r = strict(value, path, ['id', 'kind', 'name'], ['discoveryPrefix']);
-  const out: SensorSource = { id: docId(r.id, `${path}.id`), kind: oneOf(r.kind, `${path}.kind`, ['mqtt-discovery', 'home-assistant', 'csv', 'json']), name: text(r.name, `${path}.name`, 200) };
+  const out: SensorSource = { id: docId(r.id, `${path}.id`), kind: oneOf(r.kind, `${path}.kind`, ['mqtt-discovery', 'aas-interfaces', 'home-assistant', 'csv', 'json']), name: text(r.name, `${path}.name`, 200) };
   if (r.discoveryPrefix !== undefined) out.discoveryPrefix = text(r.discoveryPrefix, `${path}.discoveryPrefix`, 128);
   return out;
 }
@@ -179,7 +184,7 @@ function device(value: unknown, path: string): SensorDevice {
   return out;
 }
 function mqtt(value: unknown, path: string): SensorMqtt {
-  const r = strict(value, path, ['discoveryTopic', 'stateTopic', 'selector'], ['componentKey', 'booleanPayloads', 'availability', 'expireAfterSeconds']);
+  const r = strict(value, path, ['stateTopic', 'selector'], ['discoveryTopic', 'componentKey', 'booleanPayloads', 'availability', 'expireAfterSeconds']);
   const sel = r.selector && typeof r.selector === 'object' ? (r.selector as Raw) : null;
   let selector: Selector;
   if (sel?.kind === 'json-pointer') {
@@ -190,7 +195,8 @@ function mqtt(value: unknown, path: string): SensorMqtt {
     if (sel?.kind !== 'text') fail(`${path}.selector.kind`, 'Expected text or json-pointer');
     selector = { kind: 'text' };
   }
-  const out: SensorMqtt = { discoveryTopic: topic(r.discoveryTopic, `${path}.discoveryTopic`), stateTopic: topic(r.stateTopic, `${path}.stateTopic`), selector };
+  const out: SensorMqtt = { stateTopic: topic(r.stateTopic, `${path}.stateTopic`), selector };
+  if (r.discoveryTopic !== undefined) out.discoveryTopic = topic(r.discoveryTopic, `${path}.discoveryTopic`);
   if (r.componentKey !== undefined) out.componentKey = text(r.componentKey, `${path}.componentKey`, 128);
   if (r.booleanPayloads !== undefined) {
     const b = strict(r.booleanPayloads, `${path}.booleanPayloads`, ['on', 'off']);
@@ -296,6 +302,13 @@ function stateShape(value: unknown): SensorState {
   };
 }
 
+/**
+ * ID der vom Betreiber freigegebenen Quelle (Verbindung), über die eine Katalogquelle läuft. Bei `aas-interfaces`
+ * heißt die Katalogquelle `aas.<Betreiberquelle>`, damit dieselbe Verbindung neben einer Discovery-Quelle im selben Katalog
+ * stehen kann (Quellen-IDs sind im Katalog eindeutig). Alle anderen Quellen nutzen ihre eigene ID.
+ */
+export const operatorSourceId = (source: Pick<SensorSource, 'id' | 'kind'>): string => (source.kind === 'aas-interfaces' ? source.id.slice('aas.'.length) : source.id);
+
 const duplicates = (values: string[]) => new Set(values).size !== values.length;
 export const deviceAliasKey = (sourceId: string, a: DeviceAlias) => JSON.stringify([sourceId, a.kind, a.kind === 'connection' ? a.type : null, a.value]);
 export const signalIdentityKey = (s: Pick<SensorSignal, 'sourceId' | 'identity'>) => JSON.stringify([s.sourceId, s.identity.component, s.identity.kind, s.identity.value]);
@@ -303,6 +316,7 @@ export const signalIdentityKey = (s: Pick<SensorSignal, 'sourceId' | 'identity'>
 /** Reference, identity and transport rules that a schema alone does not express. */
 function checkCatalog(catalog: SensorCatalog): string | null {
   if (duplicates(catalog.sources.map((s) => s.id))) return 'Duplicate source ID';
+  for (const s of catalog.sources) if (s.kind === 'aas-interfaces' && !/^aas\.[A-Za-z0-9][A-Za-z0-9._-]{0,123}$/.test(s.id)) return `Source ${s.id}: an aas-interfaces source ID must be "aas." followed by the operator source ID`;
   if (duplicates(catalog.devices.map((d) => d.id))) return 'Duplicate device ID';
   if (duplicates(catalog.signals.map((s) => s.id))) return 'Duplicate signal ID';
   const sources = new Map(catalog.sources.map((s) => [s.id, s]));
@@ -319,19 +333,26 @@ function checkCatalog(catalog: SensorCatalog): string | null {
     if (!src) return `Signal ${s.id}: unknown source`;
     identities.push(signalIdentityKey(s));
     if (s.deviceId && devices.get(s.deviceId)?.sourceId !== s.sourceId) return `Signal ${s.id}: device belongs to another or unknown source`;
-    if ((src.kind === 'mqtt-discovery') !== !!s.mqtt) return `Signal ${s.id}: MQTT binding does not match the source`;
+    const mqttSource = src.kind === 'mqtt-discovery' || src.kind === 'aas-interfaces';
+    if (mqttSource !== !!s.mqtt) return `Signal ${s.id}: MQTT binding does not match the source`;
     const m = s.mqtt;
     if (!m) continue;
-    if (!['unique-id', 'discovery-topic'].includes(s.identity.kind)) return `Signal ${s.id}: invalid MQTT identity`;
-    const prefix = src.discoveryPrefix;
-    if (!prefix || /[+#]/.test(prefix) || hasControl(prefix) || prefix.endsWith('/')) return `Source ${src.id}: discovery prefix missing or invalid`;
-    if (!m.discoveryTopic.startsWith(`${prefix}/`)) return `Signal ${s.id}: discovery topic outside the prefix`;
-    const parts = m.discoveryTopic.slice(prefix.length + 1).split('/');
-    if (![3, 4].includes(parts.length) || parts[parts.length - 1] !== 'config' || !parts.every(Boolean)) return `Signal ${s.id}: invalid discovery topic`;
-    if (parts[0] === 'device') {
-      if (!m.componentKey) return `Signal ${s.id}: device discovery needs a componentKey`;
-    } else if (parts[0] !== s.identity.component || m.componentKey) return `Signal ${s.id}: component does not match the discovery topic`;
-    if (s.identity.kind === 'discovery-topic' && s.identity.value !== JSON.stringify([m.discoveryTopic, m.componentKey ?? null])) return `Signal ${s.id}: fallback identity is not canonical`;
+    if (src.kind === 'aas-interfaces') {
+      if (m.discoveryTopic !== undefined || m.componentKey !== undefined) return `Signal ${s.id}: an interface signal has no discovery configuration`;
+      if (s.identity.kind !== 'external-id') return `Signal ${s.id}: an interface signal needs an external-id identity`;
+    } else {
+      if (!['unique-id', 'discovery-topic'].includes(s.identity.kind)) return `Signal ${s.id}: invalid MQTT identity`;
+      const prefix = src.discoveryPrefix;
+      if (!prefix || /[+#]/.test(prefix) || hasControl(prefix) || prefix.endsWith('/')) return `Source ${src.id}: discovery prefix missing or invalid`;
+      if (m.discoveryTopic === undefined) return `Signal ${s.id}: discovery topic missing`;
+      if (!m.discoveryTopic.startsWith(`${prefix}/`)) return `Signal ${s.id}: discovery topic outside the prefix`;
+      const parts = m.discoveryTopic.slice(prefix.length + 1).split('/');
+      if (![3, 4].includes(parts.length) || parts[parts.length - 1] !== 'config' || !parts.every(Boolean)) return `Signal ${s.id}: invalid discovery topic`;
+      if (parts[0] === 'device') {
+        if (!m.componentKey) return `Signal ${s.id}: device discovery needs a componentKey`;
+      } else if (parts[0] !== s.identity.component || m.componentKey) return `Signal ${s.id}: component does not match the discovery topic`;
+      if (s.identity.kind === 'discovery-topic' && s.identity.value !== JSON.stringify([m.discoveryTopic, m.componentKey ?? null])) return `Signal ${s.id}: fallback identity is not canonical`;
+    }
     const binary = s.identity.component === 'binary_sensor';
     if (binary !== (s.dataType === 'boolean')) return `Signal ${s.id}: component and value type do not match`;
     if (binary !== !!m.booleanPayloads) return `Signal ${s.id}: binary payload mapping missing or unexpected`;

@@ -32,13 +32,13 @@ Ein Katalog hat `catalogId`, `revision`, `generatedAt`, `sources`, `devices` und
 | Feld | Bedeutung |
 | --- | --- |
 | source.id | Dauerhafte lokale Kennung einer Instanz, unabhängig von Adresse oder Anzeigename. |
-| source.kind | `mqtt-discovery`, `home-assistant`, `csv` oder `json`; Adapter für die letzten drei sind hier nicht implementiert. |
+| source.kind | `mqtt-discovery`, `aas-interfaces`, `home-assistant`, `csv` oder `json`. Adapter für `home-assistant`, `csv` und `json` sind hier nicht implementiert. `aas-interfaces` beschreibt MQTT-Signale aus der Asset Interfaces Description (IDTA 02017) einer Verwaltungsschale; die Quellen-ID heißt `aas.<Betreiberquelle>`, damit dieselbe Verbindung neben einer Discovery-Quelle im Katalog stehen kann (`operatorSourceId`). |
 | device.externalIds | Typisierte Gerätealiaswerte (identifier oder connection mit Typ) innerhalb dieser Quelle. Keine Zusammenführung nur anhand eines Namens. |
 | signal.id | Lokale, dauerhafte Messgrößen-ID. Eine Temperatur- und eine Feuchtemessung sind zwei Signale desselben Geräts. |
 | signal.identity | Quellkennung als Tupel aus `sourceId`, `component`, Identitätsart und Wert. Namen und sichtbare MQTT-Topics sind keine Ersatz-IDs. |
 | signal.dataType | `number`, `boolean` oder `string`. Einheit und stateClass sind nur für Zahlen erlaubt. |
 | signal.lifecycle | `active` oder `removed`; entfernt bedeutet nicht, dass ein platziertes Modellobjekt gelöscht wird. |
-| signal.mqtt | Aufgelöste Topics und begrenzter, deklarativer Extraktor für den lesenden Adapter. |
+| signal.mqtt | Aufgelöste Topics und begrenzter, deklarativer Extraktor für den lesenden Adapter. Bei Quellen `mqtt-discovery` ist `discoveryTopic` Pflicht, bei `aas-interfaces` nicht erlaubt (es gibt keine Discovery-Konfiguration). Signale von `aas-interfaces` haben die Identitätsart `external-id`, empfohlen als `<globalAssetId>#<Interface>/<Property>`. |
 | signal.staleAfterSeconds | Optionale lokale Frischevorgabe. Nicht aus fehlender Aktivität raten und beim Reimport nicht durch Quellmetadaten überschreiben. |
 
 IDs eigener Dokumentobjekte sind 1–128 Zeichen aus Buchstaben, Ziffern, Punkt, Unterstrich und Bindestrich, mit Buchstabe/Ziffer am Anfang. Asset-Referenzen erlauben auch die bestehenden SDK-IDs mit führendem Unterstrich. Maximal: 64 Quellen, 2.000 Geräte, 10.000 Signale bzw. Bindungen; Namen 200 Zeichen, Zustandstext 1.024 Zeichen, Links 2.048 Zeichen. Netzwerkadapter begrenzen rohe Discovery-Nachrichten zusätzlich auf 256 KiB und Katalogdateien auf 5 MiB UTF-8 vor dem JSON-Parsing. JSON-Objekte mit doppelten Schlüsseln müssen bereits beim Rohimport zurückgewiesen werden; ein späterer Schema-Check kann diese nach JSON.parse nicht mehr erkennen.

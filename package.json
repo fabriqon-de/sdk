@@ -70,10 +70,10 @@
     "ajv-formats": "3.0.1",
     "three": "^0.187.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vitepress": "^1.6.4",
     "vitest": "^5.0.5",
-    "vue": "^3.5.44"
+    "vue": "^3.5.45"
   },
   "peerDependenciesMeta": {
     "three": {

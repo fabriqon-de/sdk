@@ -63,17 +63,17 @@
   },
   "devDependencies": {
     "@aas-core-works/aas-core3.0-typescript": "1.0.5",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^26.6.5",
     "@types/three": "^0.187.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "three": "^0.187.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5",
+    "vite": "^8.3.8",
     "vitepress": "^1.6.4",
-    "vitest": "^5.0.5",
-    "vue": "^3.5.44"
+    "vitest": "^5.1.1",
+    "vue": "^3.5.45"
   },
   "peerDependenciesMeta": {
     "three": {
